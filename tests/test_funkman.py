@@ -20,5 +20,5 @@ testfiles_funkman = [
 for testcase in testfiles_funkman:
     filename = testcase["filename"]
     savefile = testcase["savefile"]
-    result = get_result_trap(filename)
+    result = get_result_trap(filename, csv=True)
     fplot.PlotTrapSheet(result, savefile)

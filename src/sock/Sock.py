@@ -155,7 +155,7 @@ class Socket(socketserver.UDPServer):
                 self.bot.send_fig(fig, self.channel_id_airboss)
                 # PRECISE PLOTER HERE
                 x = Plotter(table)
-                fig2 = x.plot_case1()
+                fig2 = x.plot_case()
                 self.bot.send_fig(fig2, self.channel_id_airboss)
 
             elif command == notam:

@@ -12,10 +12,8 @@ from src.precise_plot.assets import assets
 
 class Plotter(object):
     def __init__(self, result: dict):
-        now = datetime.datetime.now()
-        file_name = str(now.hour) + "_" + \
-                    str(now.minute) + "_" + \
-                    str(now.second) + "_data_file.py"
+        now = datetime.datetime.now().strftime("%Y_&m_%d_%I_%M")
+        file_name = now + "_trap_file.json"
         try:
             with open(file_name, "w") as file:
                 file.write(json.dumps(result))
@@ -168,7 +166,7 @@ class Plotter(object):
             GRV.___lur___(): 3,
         }
 
-    def plot_case1(self, file_name: str = "plot" or None, fillins: bool = False):
+    def plot_case(self, file_name: str = "plot" or None, fillins: bool = False):
         def data_interpolate(smooth: int = 500, **kwargs):
             ax = kwargs["ax"]
             x = kwargs["x"]

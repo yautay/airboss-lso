@@ -273,7 +273,7 @@ class Bot(commands.Bot):
                 self.send_fig(f1, channel_id)
 
         plotter = Plotter(test_data)
-        fig = plotter.plot_case1(file_name="test")
+        fig = plotter.plot_case(file_name="test")
         self.send_fig(fig, channel_id)
 
     def _test_strafe(self, channel_id):
