@@ -2,9 +2,9 @@ import socketserver
 import json
 import os
 
-from src.plot.Plot import Plot
+from src.plot.Plot import Plot as FunkPlot
 from src.bot.Bot import Bot
-from src.precise_plot.modules.Plotter import Plotter
+from src.precise_plot.modules.Plotter import Plotter as YautayPlot
 
 
 class Handler(socketserver.BaseRequestHandler):
@@ -52,6 +52,7 @@ class Socket(socketserver.UDPServer):
 
         self.bot = None
         self.plot = None
+        self.precise_plot = None
 
         self.channel_id_message = None
         self.channel_id_range = None
@@ -64,7 +65,7 @@ class Socket(socketserver.UDPServer):
         """Set the FunkBot instance."""
         self.bot = bot
 
-    def set_plot(self, plot: Plot):
+    def set_plot(self, plot: FunkPlot):
         """Set the FunkPlot instance."""
         self.plot = plot
 
@@ -153,10 +154,12 @@ class Socket(socketserver.UDPServer):
 
                 # Send figure to Discord.
                 self.bot.send_fig(fig, self.channel_id_airboss)
+
                 # PRECISE PLOTER HERE
-                x = Plotter(table)
-                fig2 = x.plot_case()
-                self.bot.send_fig(fig2, self.channel_id_airboss)
+                yautay_plotter = YautayPlot(dump_data=True)
+                yautay_plotter.init_data(table)
+                figure = yautay_plotter.plot_case()
+                self.bot.send_fig(figure, self.channel_id_airboss)
 
             elif command == notam:
                 print("Got NOTAM!")

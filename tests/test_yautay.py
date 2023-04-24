@@ -16,4 +16,6 @@ for filename in os.listdir(os.path.join(ROOT_DIR, "tests", "dumps")):
             results = get_result_trap(dump_data)
         except Exception as e:
             print(f"{Colors.FAIL} e {file_path} {Colors.ENDC}")
-        Plotter(results).plot_case(plot_path)
+        plotter = Plotter()
+        plotter.init_data(results)
+        plotter.plot_case(plot_path)

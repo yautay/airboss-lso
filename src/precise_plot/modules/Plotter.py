@@ -12,10 +12,13 @@ from src.utils.colors import Colors
 
 
 class Plotter(object):
-    def __init__(self, result: dict, dump_data: bool = False):
+    def __init__(self,  dump_data: bool = False):
+        self.dump_data = dump_data
+
+    def init_data(self, result: dict):
         now = datetime.datetime.now().strftime("%Y_%m_%d_%I_%M")
         file_name = now + "_trap_file.json"
-        if dump_data:
+        if self.dump_data:
             try:
                 with open(file_name, "w") as file:
                     file.write(json.dumps(result))
@@ -79,7 +82,6 @@ class Plotter(object):
         self.__limits_aoa = self.__data_limits_aoa()
         self.__limits_grv = self.__data_limits_grv()
         self.__limits_gs = self.__data_limits_gs()
-
     def __airframe_context(self, text: bool = False):
         """
         1: FA-18C

@@ -1,4 +1,5 @@
 from src.plot.Plot import Plot
+from src.precise_plot.modules.Plotter import Plotter
 from src.sock.Sock import Socket
 from src.bot.Bot import Bot
 
@@ -8,12 +9,11 @@ from root import ROOT_DIR
 
 
 class Main:
-    def __init__(self, configFile=os.path.join(ROOT_DIR, "FunkMan.ini"), test_mode: bool = False) -> None:
+    def __init__(self, configFile=os.path.join(ROOT_DIR, "FunkMan.ini")) -> None:
         # Set config file.
         self.configFile = configFile
 
         # Define parameters used later on.
-        self.test_mode = test_mode
         self.port = None
         self.host = None
         self.token = None
@@ -23,8 +23,6 @@ class Main:
         self.channel_id_notam = None
         self.image_path = None
 
-        # Default debug level.
-        self.debug_level = None
 
         # Read config file.
         set_ini(self)
@@ -33,8 +31,7 @@ class Main:
         self.funkplot = Plot(self.image_path)
 
         # Create bot instance.
-        self.funkbot = Bot(token=self.token, channel_id=self.channel_id_main, image_path=self.image_path,
-                           debug_level=self.debug_level)
+        self.funkbot = Bot(token=self.token, channel_id=self.channel_id_main, image_path=self.image_path)
 
         # Create funksocket instance.
         self.funk_sock = Socket(Host=self.host, Port=self.port)
@@ -92,13 +89,6 @@ def set_ini(funkman: Main) -> None:
     # Read config file.
     config.read(funkman.configFile)
 
-    # FUNKMAN
-    try:
-        section = config["DEFAULT"]
-        funkman.debug_level = section.getint("DEBUGLEVEL", 0)
-    except:
-        pass
-
     # FUNKBOT
     try:
         section = config["FUNKBOT"]
@@ -124,19 +114,3 @@ def set_ini(funkman: Main) -> None:
         funkman.image_path = section.get("IMAGEPATH", os.path.join(ROOT_DIR, "assets"))
     except:
         print("ERROR: [FUNKPLOT] section missing in ini file!")
-
-    # Debug message.
-    if funkman.debug_level > 0:
-        text = str(f"------------------------------------")
-        text += str(f"\nConfig parameters:")
-        text += str(f"\nDebug level     = {funkman.debug_level}")
-        text += str(f"\nHost            = {funkman.host}")
-        text += str(f"\nPort            = {funkman.port}")
-        text += str(f"\nToken (5 chars) = {funkman.token[0:4]}...")
-        text += str(f"\nChannel Main    = {funkman.channel_id_main}")
-        text += str(f"\nChannel Range   = {funkman.channel_id_range}")
-        text += str(f"\nChannel Airboss = {funkman.channel_id_airboss}")
-        text += str(f"\nChannel NOTAM   = {funkman.channel_id_notam}")
-        text += str(f"\nImage Path      = {funkman.image_path}")
-        text += str(f"\n------------------------------------")
-        print(text)

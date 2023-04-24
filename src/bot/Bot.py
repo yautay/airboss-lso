@@ -7,13 +7,13 @@ import io
 from root import ROOT_DIR
 from src.utils.utils import get_val
 
+
 class Bot(commands.Bot):
     """
     API class wrapper for Discord based on discord.py.
     """
 
-    def __init__(self, token: str, channel_id: int, command_prefix="$", image_path=os.path.join(ROOT_DIR, "assets"),
-                 debug_level: int = 0):
+    def __init__(self, token: str, channel_id: int, command_prefix="$", image_path=os.path.join(ROOT_DIR, "assets")):
 
         # Intents.
         intents = discord.Intents.all()
@@ -21,7 +21,6 @@ class Bot(commands.Bot):
         # Init discord.Client superclass.
         super().__init__(command_prefix, intents=intents)
 
-        self.debug_level = debug_level
         # Set config parameters:
 
         self.token = str(token)
@@ -35,7 +34,7 @@ class Bot(commands.Bot):
         self.channel = None
 
         # Init bot commands.
-        self._init_commands()
+        # self._init_commands()
 
     def callback(self, Func, *argv, **kwargs):
         """Callback function called at start."""
@@ -144,6 +143,7 @@ class Bot(commands.Bot):
         self.send_io(data_stream, channel_id)
 
     def send_lso_embed(self, result, channel_id: int):
+        # Funkman LSO funcionality
 
         # Get date from result.
         actype = get_val(result, "airframe", "Unkown")
