@@ -8,23 +8,26 @@ from scipy.interpolate import interp1d
 from src.precise_plot.modules.Keys import KeysCSV as K, KeysGRV as GRV, KeysGS as GS, KeysAoA as AoA
 from src.precise_plot.modules.Utils import Utils
 from src.precise_plot.assets import assets
+from src.utils.colors import Colors
 
 
 class Plotter(object):
-    def __init__(self, result: dict):
-        now = datetime.datetime.now()
-        file_name = str(now.hour) + "_" + \
-                    str(now.minute) + "_" + \
-                    str(now.second) + "_data_file.py"
-        try:
-            with open(file_name, "w") as file:
-                file.write(json.dumps(result))
-                print("Plotter Class debug msg\n")
-                print(datetime.datetime.now().isoformat() + "\n")
-                print(json.dumps(result))
-                print("END\n")
-        except:
-            print(json.dumps(result))
+    def __init__(self,  dump_data: bool = False):
+        self.dump_data = dump_data
+
+    def init_data(self, result: dict):
+        now = datetime.datetime.now().strftime("%Y_%m_%d_%I_%M")
+        file_name = now + "_trap_file.json"
+        if self.dump_data:
+            try:
+                with open(file_name, "w") as file:
+                    file.write(json.dumps(result))
+                    print("Plotter Class debug msg\n")
+                    print(datetime.datetime.now().isoformat() + "\n")
+                    print(json.dumps(result))
+                    print("END\n")
+            except Exception as e:
+                print(f"{Colors.FAIL} e {Colors.ENDC}")
 
         self.__data = {
             K.x(): -np.array(result["trapsheet"][K.x()]),
@@ -79,7 +82,6 @@ class Plotter(object):
         self.__limits_aoa = self.__data_limits_aoa()
         self.__limits_grv = self.__data_limits_grv()
         self.__limits_gs = self.__data_limits_gs()
-
     def __airframe_context(self, text: bool = False):
         """
         1: FA-18C
@@ -168,7 +170,7 @@ class Plotter(object):
             GRV.___lur___(): 3,
         }
 
-    def plot_case1(self, file_name: str = "plot" or None, fillins: bool = False):
+    def plot_case(self, file_name: str = "plot" or None, fillins: bool = False):
         def data_interpolate(smooth: int = 500, **kwargs):
             ax = kwargs["ax"]
             x = kwargs["x"]
@@ -560,7 +562,7 @@ class Plotter(object):
 
         # plt.show()
 
-        print(self.__oth_data)
+        # print(self.__oth_data)
 
         title = str(f'Trapsheet of {self.__oth_data["player"]} [{self.__oth_data["actype"]}]')
         title += str(f'\n{self.__oth_data["grade"]} {self.__oth_data["points"]}PT - {self.__oth_data["details"]}')

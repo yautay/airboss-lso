@@ -5,17 +5,15 @@ import threading
 import matplotlib.pyplot as plt
 import io
 from root import ROOT_DIR
-from src.precise_plot.modules.Plotter import Plotter
-from src.precise_plot.test_data.test_table import test_data
 from src.utils.utils import get_val
+
 
 class Bot(commands.Bot):
     """
     API class wrapper for Discord based on discord.py.
     """
 
-    def __init__(self, token: str, channel_id: int, command_prefix="$", image_path=os.path.join(ROOT_DIR, "assets"),
-                 debug_level: int = 0):
+    def __init__(self, token: str, channel_id: int, command_prefix="$", image_path=os.path.join(ROOT_DIR, "assets")):
 
         # Intents.
         intents = discord.Intents.all()
@@ -23,7 +21,6 @@ class Bot(commands.Bot):
         # Init discord.Client superclass.
         super().__init__(command_prefix, intents=intents)
 
-        self.debug_level = debug_level
         # Set config parameters:
 
         self.token = str(token)
@@ -37,7 +34,7 @@ class Bot(commands.Bot):
         self.channel = None
 
         # Init bot commands.
-        self._init_commands()
+        # self._init_commands()
 
     def callback(self, Func, *argv, **kwargs):
         """Callback function called at start."""
@@ -146,6 +143,7 @@ class Bot(commands.Bot):
         self.send_io(data_stream, channel_id)
 
     def send_lso_embed(self, result, channel_id: int):
+        # Funkman LSO funcionality
 
         # Get date from result.
         actype = get_val(result, "airframe", "Unkown")
@@ -227,87 +225,10 @@ class Bot(commands.Bot):
         # Send to Discord.
         self.send_discord_file(fileLSO, channel_id, embed)
 
-    def _init_commands(self):
-        """Init commands."""
+    # def _init_commands(self):
+    #     """Init commands."""
 
-        @self.command(aliases=['testplots'])
-        async def TestPlots(ctx: commands.Context):
-            self._test_plots(ctx.channel.id)
+        # @self.command(aliases=['testplots'])
+        # async def TestPlots(ctx: commands.Context):
+        #     self._test_plots(ctx.channel.id)
 
-        @self.command(aliases=['testjtfplot'])
-        async def TestJtfPlot(ctx: commands.Context):
-            self._test_traps(ctx.channel.id, True)
-
-        @self.command(aliases=['teststrafe'])
-        async def TestStrafe(ctx: commands.Context):
-            self._test_strafe(ctx.channel.id)
-
-        @self.command(aliases=['testbomb'])
-        async def TestBomb(ctx: commands.Context):
-            self._test_bomb(ctx.channel.id)
-
-    def _test_traps(self, channel_id, sci_only=False):
-        if not sci_only:
-            from src.utils.tests import test_trap, get_result_trap
-            from src.plot.Plot import Plot
-
-            # Init FunkPlot.
-            funkyplot = Plot()
-
-            # Trap sheet files.
-            trapfiles = [
-                os.path.join(ROOT_DIR, "tests", "Trapsheet-FA-18C_hornet-001.csv"),
-                os.path.join(ROOT_DIR, "tests", "Trapsheet-FA-18C_hornet-002.csv"),
-                os.path.join(ROOT_DIR, "tests", "SH_unicorn_AIRBOSS-trapsheet-Yoda_FA-18C_hornet-0001.csv"),
-                os.path.join(ROOT_DIR, "tests", "Trapsheet-AV8B_Tarawa-001.csv")]
-
-            for trapfile in trapfiles:
-                # Get result from trap file.
-                result = get_result_trap(trapfile)
-
-                # Test LSO embed.
-                self.send_lso_embed(result, channel_id)
-
-                # Test trap.
-                f1, a1 = test_trap(funkyplot, trapfile)
-                self.send_fig(f1, channel_id)
-
-        plotter = Plotter(test_data)
-        fig = plotter.plot_case1(file_name="test")
-        self.send_fig(fig, channel_id)
-
-    def _test_strafe(self, channel_id):
-        from src.utils.tests import test_strafe
-        from src.plot.Plot import Plot
-
-        # Init FunkPlot.
-        funkyplot = Plot()
-
-        # Test strafe.
-        fig, ax = test_strafe(funkyplot)
-        self.send_fig(fig, channel_id)
-
-    def _test_bomb(self, channel_id):
-        from src.utils.tests import test_bomb
-        from src.plot.Plot import Plot
-
-        # Init FunkPlot.
-        funkyplot = Plot()
-
-        # Test strafe.
-        fig, ax = test_bomb(funkyplot)
-        self.send_fig(fig, channel_id)
-
-    def _test_plots(self, channel_id):
-
-        # Debug info.
-        print("Testing Plots...")
-
-        # Test trapsheet.
-        self._test_traps(channel_id)
-
-        # Test strafe.
-        self._test_strafe(channel_id)
-
-        # Test bomb.
-        self._test_bomb(channel_id)

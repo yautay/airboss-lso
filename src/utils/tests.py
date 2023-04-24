@@ -4,7 +4,7 @@ Test cases.
 
 from random import randint
 from src.plot.Plot import Plot
-from src.utils.utils import read_trap
+from src.utils.utils import read_trap_csv
 
 
 def get_result_strafe():
@@ -55,72 +55,73 @@ def get_result_bomb():
     return result
 
 
-def get_result_trap(trapfile: str):
+def get_result_trap(trapfile: str or dict, csv: bool = False) -> dict:
     # Read trapsheet from disk for testing.
-    trapsheet = read_trap(trapfile)
+    if csv:
+        data_csv = read_trap_csv(trapfile)
+        trapsheet = data_csv["trapsheet"]
+        trapfile = data_csv["info"]
+    else:
+        trapsheet = trapfile["trapsheet"]
 
     # Debug info.
     # print(trapsheet)
-    # print(trapsheet.keys())
+    # print(trapfile)
+
+    # grade
     try:
-        grade = trapsheet.get("Grade")[-1]
+        if csv:
+            grade = trapsheet["Grade"][-1]
+        else:
+            grade = trapfile["grade"]
     except:
         grade = "N/A"
+    # details
     try:
-        details = trapsheet.get("Details")[-1]
+        if csv:
+            details = trapsheet["Details"][-1]
+            details.strip()
+            if details.strip() == "":
+                details = "Unicorn"
+        else:
+            details = trapfile["details"]
     except:
         details = "N/A"
+    # points
     try:
-        points = trapsheet.get("Points")[-1]
+        if csv:
+            points = trapsheet["Points"][-1]
+        else:
+            points = trapfile["points"]
     except:
         points = 0
-
-    details.strip()
-    if details.strip() == "":
-        details = "Unicorn"
-
-    rwyangle = -9
-    wire = randint(1, 4)
-    carriername = "USS Stennis"
-    carriertype = "CVN-74"
-    landingdist = -165 + 79  # sterndist+wire3
-    if "Tarawa" in trapfile:
-        rwyangle = 0
-        wire = None
-        carriername = "Tarawa"
-        carriertype = "LHA"
-        landingdist = -125 + 69  # sterndist+landingpos
-
-    airframe = 'FA-18C_hornet'
-    if "AV8B" in trapfile:
-        airframe = "AV8BNA"
+    # case
+    case = trapfile["case"]
 
     # Result.
     result = {
         "command": "moose_lso_grade",
-        "name": "Ghostrider",
+        "server_name": trapfile["server_name"],
+        "name": trapfile["name"],
         "trapsheet": trapsheet,
-        "airframe": airframe,
-        "mitime": "05:00:01",
-        "midate": "2022-04-01",
-        "wind": 25.13432432432423,
-        "carriertype": carriertype,
-        "carriername": carriername,
-        "carrierrwy": rwyangle,
-        "landingdist": landingdist,
-        "theatre": "Kola",
-        "Tgroove": randint(10, 20),
-        "case": randint(1, 3),
-        "grade": grade or "OK",
-        "finalscore": points or 2,
-        "points": points or 3,
+        "airframe": trapfile["airframe"],
+        "mitime": trapfile["mitime"],
+        "midate": trapfile["midate"],
+        "wind": trapfile["wind"],
+        "carriertype": trapfile["carriertype"],
+        "carriername": trapfile["carriername"],
+        "carrierrwy": trapfile["carrierrwy"],
+        "landingdist": trapfile["landingdist"],
+        "theatre": trapfile["theatre"],
+        "Tgroove": trapfile["Tgroove"],
+        "case": trapfile["case"],
+        "grade": trapfile["grade"],
+        "finalscore": trapfile["points"],
+        "points": trapfile["points"],
         "details": details or "(LUL)X (F)IM  LOLULIC LOLULAR"
     }
-    if wire:
-        result["wire"] = wire
-
-    print(result)
-
+    if trapfile["wire"]:
+        result["wire"] = trapfile["wire"]
     return result
 
 
