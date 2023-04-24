@@ -8,21 +8,23 @@ from scipy.interpolate import interp1d
 from src.precise_plot.modules.Keys import KeysCSV as K, KeysGRV as GRV, KeysGS as GS, KeysAoA as AoA
 from src.precise_plot.modules.Utils import Utils
 from src.precise_plot.assets import assets
+from src.utils.colors import Colors
 
 
 class Plotter(object):
-    def __init__(self, result: dict):
-        now = datetime.datetime.now().strftime("%Y_&m_%d_%I_%M")
+    def __init__(self, result: dict, dump_data: bool = False):
+        now = datetime.datetime.now().strftime("%Y_%m_%d_%I_%M")
         file_name = now + "_trap_file.json"
-        try:
-            with open(file_name, "w") as file:
-                file.write(json.dumps(result))
-                print("Plotter Class debug msg\n")
-                print(datetime.datetime.now().isoformat() + "\n")
-                print(json.dumps(result))
-                print("END\n")
-        except:
-            print(json.dumps(result))
+        if dump_data:
+            try:
+                with open(file_name, "w") as file:
+                    file.write(json.dumps(result))
+                    print("Plotter Class debug msg\n")
+                    print(datetime.datetime.now().isoformat() + "\n")
+                    print(json.dumps(result))
+                    print("END\n")
+            except Exception as e:
+                print(f"{Colors.FAIL} e {Colors.ENDC}")
 
         self.__data = {
             K.x(): -np.array(result["trapsheet"][K.x()]),
@@ -558,7 +560,7 @@ class Plotter(object):
 
         # plt.show()
 
-        print(self.__oth_data)
+        # print(self.__oth_data)
 
         title = str(f'Trapsheet of {self.__oth_data["player"]} [{self.__oth_data["actype"]}]')
         title += str(f'\n{self.__oth_data["grade"]} {self.__oth_data["points"]}PT - {self.__oth_data["details"]}')
