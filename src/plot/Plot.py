@@ -11,9 +11,8 @@ import math
 import numpy as np
 from datetime import datetime
 from enum import Enum
-
-from root import ROOT_DIR
 from src.utils.utils import get_val
+from src.plot.assets.path import FUNKMAN_ASSETS_DIR
 
 
 class PlotColor(Enum):
@@ -52,7 +51,7 @@ class AircraftType(Enum):
 
 class Plot:
     # /home/yautay/repo/FunkMan/assets/BombCircle.png
-    def __init__(self, ImagePath=f"{ROOT_DIR}/src/plot/assets/") -> None:
+    def __init__(self, ImagePath=FUNKMAN_ASSETS_DIR) -> None:
         print(ImagePath)
         # Info message.
         print(f"Init FunkPlot: Reading images from {ImagePath}...")

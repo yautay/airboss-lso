@@ -114,7 +114,7 @@ class Socket(socketserver.UDPServer):
             server = table.get("server_name", "unknown")
 
             # Debug info
-            print("Got {command} from server {server}!")
+            print(f"Got {command} from server {server}!")
 
             if command == textmessage:
                 print("Got text message!")
@@ -163,9 +163,10 @@ class Socket(socketserver.UDPServer):
 
             elif command == notam:
                 print("Got NOTAM!")
-
+                # Extract text.
+                text = table.get("text", " ")
                 # Send LSO grade.
-                self.bot.send_text(table, self.channel_id_notams)
+                self.bot.send_text(text, self.channel_id_notams)
 
             else:
                 print("WARNING: Unknown command in table: {command}")
