@@ -52,7 +52,7 @@ class AircraftType(Enum):
 
 class Plot:
     # /home/yautay/repo/FunkMan/assets/BombCircle.png
-    def __init__(self, ImagePath=f"{ROOT_DIR}/assets/") -> None:
+    def __init__(self, ImagePath=f"{ROOT_DIR}/src/plot/assets/") -> None:
         print(ImagePath)
         # Info message.
         print(f"Init FunkPlot: Reading images from {ImagePath}...")
