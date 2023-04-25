@@ -17,6 +17,7 @@ class Main:
         self.port = None
         self.host = None
         self.token = None
+        self.channel_id_server = None
         self.channel_id_main = None
         self.channel_id_range = None
         self.channel_id_airboss = None
