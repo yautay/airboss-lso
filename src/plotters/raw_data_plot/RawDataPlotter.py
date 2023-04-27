@@ -1,7 +1,7 @@
 import math
 import numpy as np
 from matplotlib import pyplot as plt
-from scipy.interpolate import interp1d
+from src.lib.ParserAirbossData import DownwindStripper
 from src.lib.Keys import KeysCSV as K, KeysGRV as GRV, KeysGS as GS, KeysAoA as AoA
 from src.lib.Utils import Utils
 from src.plotters.yautay_plot.assets import assets
@@ -24,28 +24,9 @@ class RawDataPlotter(object):
             ax = kwargs["ax"]
             x_raw = kwargs["x"]
             y_raw = kwargs["y"]
-            context = kwargs["C"]
 
-            def downwind_stripper() -> int:
-                x_max = x_raw.max()
-                # print(Bcolors.OKCYAN + "x max: " + str(x_max) + Bcolors.ENDC)
-                downwind = False
-                last_x = 9999
-                downwind_index = 0
+            downwind_pool = -len(x_raw) + DownwindStripper.downwind_stripper(x_raw)
 
-                for i in range(len(x_raw)):
-                    # jeśli jest za rufą
-                    if x_raw[i] > 0:
-                        # jeśli maleje
-                        if x_raw[i] < last_x:
-                            # print("fall ", x[i])
-                            last_x = x_raw[i]
-                        else:
-                            # print("raise", x[i])
-                            downwind_index = i
-                return downwind_index
-
-            downwind_pool = -len(x_raw) + downwind_stripper()
             x = x_raw[downwind_pool:]
             y = y_raw[downwind_pool:]
 

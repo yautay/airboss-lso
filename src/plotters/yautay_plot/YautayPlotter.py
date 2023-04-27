@@ -5,7 +5,7 @@ from scipy.interpolate import interp1d
 from src.lib.Keys import KeysCSV as K, KeysGRV as GRV, KeysGS as GS, KeysAoA as AoA
 from src.lib.Utils import Utils
 from src.plotters.yautay_plot.assets import assets
-from src.lib.ParserAirbossData import ParserAirbossData
+from src.lib.ParserAirbossData import ParserAirbossData, DownwindStripper
 
 
 class YautayPlotter(object):
@@ -24,28 +24,9 @@ class YautayPlotter(object):
             ax = kwargs["ax"]
             x = kwargs["x"]
             y = kwargs["y"]
-            context = kwargs["C"]
 
-            def downwind_stripper() -> int:
-                x_max = x.max()
-                # print(Bcolors.OKCYAN + "x max: " + str(x_max) + Bcolors.ENDC)
-                downwind = False
-                last_x = 9999
-                downwind_index = 0
+            downwind_pool = -len(x) + DownwindStripper.downwind_stripper(x)
 
-                for i in range(len(x)):
-                    # jeśli jest za rufą
-                    if x[i] > 0:
-                        # jeśli maleje
-                        if x[i] < last_x:
-                            # print("fall ", x[i])
-                            last_x = x[i]
-                        else:
-                            # print("raise", x[i])
-                            downwind_index = i
-                return downwind_index
-
-            downwind_pool = -len(x) + downwind_stripper()
             x = x[downwind_pool:]
             y = y[downwind_pool:]
 
@@ -55,7 +36,6 @@ class YautayPlotter(object):
             _dfs = _f(X_smooth)
             ax.plot(X_smooth, _dfs, linewidth=track_line_width, label="Track",
                     color=track_line_colour)
-            # print(Bcolors.OKBLUE + context + Bcolors.ENDC)
 
         dta = self.__data
 

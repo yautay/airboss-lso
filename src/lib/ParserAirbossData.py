@@ -139,3 +139,26 @@ class ParserAirbossData:
         with open(os.path.join(ROOT_DIR, "tests", "results", "data", "json", "data_oth" + self.__dump_name),
                   "w") as oth_data_dump:
             oth_data_dump.write(json.dumps(self.__oth_data, indent=4))
+
+
+class DownwindStripper:
+    @staticmethod
+    def downwind_stripper(x: np.array) -> int:
+        print(x)
+        x_max = x.max()
+        print(Colors.OKCYAN + "x max: " + str(x_max) + Colors.ENDC)
+        downwind = False
+        last_x = 9999
+        downwind_index = 0
+
+        for i in range(len(x)):
+            # jeśli jest za rufą
+            if x[i] > 0:
+                # jeśli maleje
+                if x[i] < last_x:
+                    # print("fall ", x[i])
+                    last_x = x[i]
+                else:
+                    # print("raise", x[i])
+                    downwind_index = i
+        return downwind_index
