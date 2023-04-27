@@ -185,15 +185,15 @@ class Analyzer(object):
                             downwind_index = i
                 return downwind_index
 
-            downwind_pool = -len(x) + downwind_stripper()
-            x = x[downwind_pool:]
-            y = y[downwind_pool:]
+            # downwind_pool = -len(x) + downwind_stripper()
+            # x = x[downwind_pool:]
+            # y = y[downwind_pool:]
 
-            X_smooth = np.linspace(x[:1], x[-1:], smooth)
+            # X_smooth = np.linspace(x[:1], x[-1:], smooth)
 
-            _f = interp1d(x, y, kind='quadratic')
-            _dfs = _f(X_smooth)
-            ax.plot(X_smooth, _dfs, linewidth=track_line_width, label="Track",
+            # _f = interp1d(x, y, kind='quadratic')
+            # _dfs = _f(X_smooth)
+            ax.plot(x, y, linewidth=track_line_width, label="Track",
                     color=track_line_colour)
             # print(Bcolors.OKBLUE + context + Bcolors.ENDC)
 
@@ -633,7 +633,7 @@ class Analyzer(object):
 
         overlay_squadron()
         overlay_points()
-        overlay_stamps_and_comments()
+        # overlay_stamps_and_comments()
 
         # fig.figure.figimage(plt.imread("/home/yautay/repo/dcs-bot/assets/testpic.png"), 0, 0, alpha=0.2, zorder=-1,
         #                     clip_on=True)
