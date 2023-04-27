@@ -1,19 +1,15 @@
-"""
-FunkPlot
-
-This class uses matplotlib to create fancy images of trap sheets as well as bombing and strafing results.
-"""
+from enum import Enum
+from datetime import datetime
 import os.path
-
-import matplotlib.pyplot as plt
-from matplotlib.offsetbox import TextArea, AnnotationBbox
-import matplotlib
 import math
 import numpy as np
-from datetime import datetime
-from enum import Enum
-from src.utils.utils import get_val
+import matplotlib
+import matplotlib.pyplot as plt
+from matplotlib.offsetbox import TextArea, AnnotationBbox
 from root import ROOT_DIR
+from src.lib.Utils import Utils
+
+get_val = Utils.get_val
 
 
 class PlotColor(Enum):
@@ -374,7 +370,6 @@ class Plot:
         """
         Creates trapsheet figure for a given player data table.
         """
-
         # Set matplotlib backend.
         matplotlib.use('Agg')
         plt.ioff()
@@ -401,16 +396,17 @@ class Plot:
         feet2meter = 0.3048
 
         # Get arrays.
-        X = -np.array(trapsheet["X"])  # X in meters. Take care of minus sign!
+        X = np.array(trapsheet["X"])  # X in meters.
         Y = np.array(trapsheet["Z"])  # Y in meters.
         AOA = np.array(trapsheet["AoA"])  # Angle of attack in AU.
         ALT = np.array(trapsheet["Alt"]) * meter2feet  # Altitude in feet.
 
         # Get other info from result.
-        actype = get_val(result, "airframe", "Unkown")
+        print(result.keys())
+        actype = get_val(result, "actype", "Unkown")
         Tgroove = get_val(result, "Tgroove", "?", 1)
 
-        player = get_val(result, "name", "Ghostrider")
+        player = get_val(result, "player", "Ghostrider")
         grade = get_val(result, "grade", "?")
         points = get_val(result, "points", "?")
         details = get_val(result, "details")
@@ -420,9 +416,9 @@ class Plot:
         carriertype = get_val(result, "carriertype", "?")
         carriername = get_val(result, "carriername", "?")
         landingdist = get_val(result, "landingdist", -86)
-        windondeck = get_val(result, "wind", "?", 1)
-        missiontime = get_val(result, "mitime", "?")
-        missiondate = get_val(result, "midate", "?")
+        windondeck = get_val(result, "windondeck", "?", 1)
+        missiontime = get_val(result, "missiontime", "?")
+        missiondate = get_val(result, "missiondate", "?")
         theatre = get_val(result, "theatre", "Unknown Map")
 
         # Angled runway.
@@ -449,10 +445,12 @@ class Plot:
 
         # X-Y array in NM
         dx = landingdist
+        dx=-85
         if angledRunway:
             dy = 9.5  # Translate perpendicular so that the y=0 corresponds to the stern coordinate.
         else:
             dy = 8  # 35
+
         xy = np.array([X + dx, Y + dy]) * meter2nm  # convert to NM
 
         # Rotate grid

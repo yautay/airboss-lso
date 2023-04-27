@@ -470,7 +470,7 @@ class YautayPlotter(object):
         #
         #              horizontalalignment='left', verticalalignment="bottom")
         if file_name:
-            fig.savefig(file_name)
+            # fig.savefig(file_name)
             fig.savefig(file_name + "-alpha", transparent=True)
 
         return fig

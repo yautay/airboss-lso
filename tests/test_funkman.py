@@ -1,24 +1,35 @@
-from root import ROOT_DIR
-from src.plotters.funkman_plot.FunkmanPlot import Plot
-from src.utils.tests import get_result_trap
+import json
 import os
+from src.lib.Bcolors import Bcolors as Colors
+from root import ROOT_DIR
+from src.lib.ParserAirbossData import ParserAirbossData
+from tests.lib import get_result_trap
+from src.plotters.funkman_plot.FunkmanPlot import Plot as FunkmanPlot
 
-fplot = Plot()
+# fplot = Plot()
+#
+# for testcase in testfiles_funkman:
+#     filename = testcase["filename"]
+#     savefile = testcase["savefile"]
+#     result = get_result_trap(filename)
+#     fplot.PlotTrapSheet(result, savefile)
 
-testfiles_funkman = [
-    {"filename": os.path.join(ROOT_DIR, "tests", "csv", "Trapsheet-AV8B_Tarawa-001.csv"),
-     "savefile": os.path.join(ROOT_DIR, "tests", "results", "funkman", "Trapsheet-AV8B_Tarawa-001.png")},
-    {"filename": os.path.join(ROOT_DIR, "tests", "csv", "SH_unicorn_AIRBOSS-trapsheet-Yoda_FA-18C_hornet-0001.csv"),
-     "savefile": os.path.join(ROOT_DIR, "tests", "results", "funkman", "SH_unicorn_AIRBOSS-trapsheet-Yoda_FA-18C_hornet-0001.png")},
-    {"filename": os.path.join(ROOT_DIR, "tests", "csv", "Trapsheet-FA-18C_hornet-001.csv"),
-     "savefile": os.path.join(ROOT_DIR, "tests", "results", "funkman", "Trapsheet-FA-18C_hornet-001.png")},
-    {"filename": os.path.join(ROOT_DIR, "tests", "csv", "Trapsheet-FA-18C_hornet-002.csv"),
-     "savefile": os.path.join(ROOT_DIR, "tests", "results", "funkman", "Trapsheet-FA-18C_hornet-002.png")},
+for filename in os.listdir(os.path.join(ROOT_DIR, "tests", "dumps")):
+    file_path = os.path.join(os.path.join(ROOT_DIR, "tests", "dumps"), filename)
+    plot_path = os.path.join(os.path.join(ROOT_DIR, "tests", "results", "funkman"), filename.strip(".json"))
 
-]
+    with open(file_path, "r") as dump_file:
+        try:
+            dump_data = json.load(dump_file)
+            results = get_result_trap(dump_data)
+        except Exception as e:
+            print(f"{Colors.FAIL} e {file_path} {Colors.ENDC}")
 
-for testcase in testfiles_funkman:
-    filename = testcase["filename"]
-    savefile = testcase["savefile"]
-    result = get_result_trap(filename, csv=True)
-    fplot.PlotTrapSheet(result, savefile)
+        parser_airboss_dump = ParserAirbossData()
+        parser_airboss_dump.init_data(results)
+
+        test_data = parser_airboss_dump.oth_data
+        test_data["trapsheet"] = parser_airboss_dump.data
+
+        plotter = FunkmanPlot()
+        plotter.PlotTrapSheet(result=test_data, filename=plot_path)

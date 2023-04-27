@@ -1,8 +1,8 @@
 import json
 import os
-from src.utils.colors import Colors
+from src.lib.Bcolors import Bcolors as Colors
 from root import ROOT_DIR
-from src.utils.tests import get_result_trap
+from tests.lib import get_result_trap
 from src.plotters.yautay_plot.YautayPlotter import YautayPlotter
 from src.lib.ParserAirbossData import ParserAirbossData
 

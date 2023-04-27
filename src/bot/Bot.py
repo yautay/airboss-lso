@@ -5,7 +5,9 @@ import threading
 import matplotlib.pyplot as plt
 import io
 from root import ROOT_DIR
-from src.utils.utils import get_val
+from src.lib.Utils import Utils
+
+get_val = Utils.get_val
 
 
 class Bot(commands.Bot):

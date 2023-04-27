@@ -1,10 +1,9 @@
 import json
 import os
-
 from src.lib.ParserAirbossData import ParserAirbossData
-from src.utils.colors import Colors
+from src.lib.Bcolors import Bcolors as Colors
 from root import ROOT_DIR
-from src.utils.tests import get_result_trap
+from tests.lib import get_result_trap
 from src.plotters.raw_data_plot.RawDataPlotter import RawDataPlotter
 
 filename = "2023_04_26_09_31_trap_file.json"

@@ -1,4 +1,4 @@
-class Utils(object):
+class Utils:
 
     @staticmethod
     def mtrs_to_nm(mtrs: float) -> float:
@@ -50,3 +50,22 @@ class Utils(object):
             return (0.918 * units) - 3.411
         else:
             return -10 + (50 / 30 * units)
+
+    @staticmethod
+    def get_val(table: dict, key: str, nil: str = "", precision: int or None = None) -> bool or int or str:
+        """
+        Get table value.
+        """
+        if key in table.keys():
+            value = table[key]
+            if value == "false":
+                return False
+            elif value == "true":
+                return True
+            elif isinstance(value, int):
+                if precision:
+                    return str(round(value, precision))
+            else:
+                return value
+        else:
+            return nil
