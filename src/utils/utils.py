@@ -50,10 +50,10 @@ def read_trap_csv(filename: str) -> dict:
                     try:
                         fvalue = float(svalue)
                         if k == "X":
-                            # Invert X. The re-inversion is done in plot now.
+                            # Invert X. The re-inversion is done in funkman_plot now.
                             fvalue = -fvalue
                         elif k == "Alt":
-                            # Convert altitude from feet to meters. Back conversion is done in plot now.
+                            # Convert altitude from feet to meters. Back conversion is done in funkman_plot now.
                             fvalue = fvalue * 0.3048
                         d[k] = np.append(d[k], fvalue)
                     except ValueError:

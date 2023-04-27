@@ -3,7 +3,8 @@ import os
 from src.utils.colors import Colors
 from root import ROOT_DIR
 from src.utils.tests import get_result_trap
-from src.precise_plot.modules.Plotter import Plotter
+from src.plotters.yautay_plot.YautayPlotter import YautayPlotter
+from src.lib.ParserAirbossData import ParserAirbossData
 
 
 for filename in os.listdir(os.path.join(ROOT_DIR, "tests", "dumps")):
@@ -16,6 +17,7 @@ for filename in os.listdir(os.path.join(ROOT_DIR, "tests", "dumps")):
             results = get_result_trap(dump_data)
         except Exception as e:
             print(f"{Colors.FAIL} e {file_path} {Colors.ENDC}")
-        plotter = Plotter()
-        plotter.init_data(results)
+        parser_airboss_dump = ParserAirbossData()
+        parser_airboss_dump.init_data(results)
+        plotter = YautayPlotter(parser_airboss_dump)
         plotter.plot_case(plot_path)

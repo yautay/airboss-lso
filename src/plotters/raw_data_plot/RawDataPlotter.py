@@ -2,196 +2,54 @@ import math
 import numpy as np
 from matplotlib import pyplot as plt
 from scipy.interpolate import interp1d
+from src.lib.Keys import KeysCSV as K, KeysGRV as GRV, KeysGS as GS, KeysAoA as AoA
+from src.lib.Utils import Utils
+from src.plotters.yautay_plot.assets import assets
+from src.lib.ParserAirbossData import ParserAirbossData
 
-from src.precise_plot.modules.Keys import KeysCSV as K, KeysGRV as GRV, KeysGS as GS, KeysAoA as AoA
-from src.precise_plot.modules.Utils import Utils
-from src.precise_plot.assets import assets
-from src.utils.colors import Colors
 
+class RawDataPlotter(object):
+    def __init__(self, data_object: ParserAirbossData):
+        self.__data = data_object.data
+        self.__oth_data = data_object.oth_data
+        self.__airframe_index = data_object.airframe_index
+        self.__limits_aoa = data_object.limits_aoa
+        self.__limits_lu = data_object.limits_lu
+        self.__limits_lue = data_object.limits_lue
+        self.__limits_gs = data_object.limits_gs
+        self.__limits_gse = data_object.limits_gse
 
-class Analyzer(object):
-    def __init__(self,  dump_data: bool = False):
-        self.dump_data = dump_data
-
-    def init_data(self, result: dict):
-
-        self.__data = {
-            K.x(): -np.array(result["trapsheet"][K.x()]),
-            K.z(): np.array(result["trapsheet"][K.z()]),
-            K.aoa(): np.array(result["trapsheet"][K.aoa()]),
-            K.alt(): np.array(result["trapsheet"][K.alt()]),
-            K.vy(): np.array(result["trapsheet"][K.vy()]),
-            K.roll(): np.array(result["trapsheet"][K.roll()]),
-            K.lue(): -np.array(result["trapsheet"][K.lue()]),
-            K.gse(): np.array(result["trapsheet"][K.gse()]),
-        }
-
-        def get_val(table, key, nil="", precision=None):
-            """
-            Get table value.
-            """
-            if key in table:
-                value = table[key]
-                if value == "false":
-                    return False
-                elif value == "true":
-                    return True
-                else:
-                    if precision != None:
-                        return str(round(value, precision))
-                    else:
-                        return value
-            else:
-                return nil
-
-        self.__oth_data = {
-            "actype": get_val(result, "airframe", "Unkown"),
-            "Tgroove": get_val(result, "Tgroove", "?", 1),
-
-            "player": get_val(result, "name", "Ghostrider"),
-            "grade": get_val(result, "grade", "?"),
-            "points": get_val(result, "points", "?"),
-            "details": get_val(result, "details"),
-            "case": get_val(result, "case", "?"),
-            "wire": get_val(result, "wire", "?"),
-
-            "carriertype": get_val(result, "carriertype", "?"),
-            "carriername": get_val(result, "carriername", "?"),
-            "landingdist": get_val(result, "landingdist", "?"),
-            "windondeck": get_val(result, "wind", "?", 1),
-            "missiontime": get_val(result, "mitime", "?"),
-            "missiondate": get_val(result, "midate", "?"),
-            "theatre": get_val(result, "theatre", "Unknown Map")
-        }
-
-        self.__airframe = self.__airframe_context()
-        self.__limits_aoa = self.__data_limits_aoa()
-        self.__limits_grv = self.__data_limits_grv()
-        self.__limits_gs = self.__data_limits_gs()
-
-    def __airframe_context(self, text: bool = False):
-        """
-        1: FA-18C
-        2: F-14
-        3: AV-8
-        """
-        if "FA-18C" in self.__oth_data["actype"]:
-            if text:
-                return "F/A-18C"
-            return 1
-        elif "F-14" in self.__oth_data["actype"]:
-            if text:
-                return "F-14"
-            return 2
-        elif "AV-8" in self.__oth_data["actype"]:
-            if text:
-                return "AV-8B"
-            return 9
-
-    def __data_limits_aoa(self):
-        if self.__airframe == 1:
-            # F18
-            return {
-                AoA.slo_hi(): 9.8,
-                AoA.slo_med(): 9.3,
-                AoA.slo_lo(): 8.8,
-                AoA.ok(): 8.1,
-                AoA.fast_lo(): 7.4,
-                AoA.fast_med(): 6.9,
-                AoA.fast_hi(): 6.3,
-            }
-
-    def __data_limits_gs(self):
-        if self.__airframe == 9:
-            return {
-                GS.___hi___(): 5.4,
-                GS.__hi__(): 4.9,
-                GS.hi(): 4.2,
-                GS.gs(): 3.5,
-                GS.lo(): 3,
-                GS.__lo__(): 2.3,
-                GS.___lo___(): 2.0,
-            }
-        else:
-            return {
-                GS.___hi___(): 5.0,
-                GS.__hi__(): 4.3,
-                GS.hi(): 3.9,
-                GS.gs(): 3.5,
-                GS.lo(): 3.2,
-                GS.__lo__(): 2.9,
-                GS.___lo___(): 2.6,
-            }
-
-    def __data_limits_gse(self):
-        if self.__airframe == 9:
-            return {
-                GS.___hi___(): 1.9,
-                GS.__hi__(): 1.4,
-                GS.hi(): 0.7,
-                GS.gs(): 0,
-                GS.lo(): -0.5,
-                GS.__lo__(): -1.2,
-                GS.___lo___(): -1.5,
-            }
-        else:
-            return {
-                GS.___hi___(): 1.5,
-                GS.__hi__(): 0.8,
-                GS.hi(): 0.4,
-                GS.gs(): 0,
-                GS.lo(): -0.3,
-                GS.__lo__(): -0.6,
-                GS.___lo___(): -0.9,
-            }
-
-    @staticmethod
-    def __data_limits_grv():
-        return {
-            GRV.___lul___(): -3,
-            GRV.__lul__(): -1,
-            GRV.lul(): -.5,
-            GRV.ok(): 0,
-            GRV.lur(): .5,
-            GRV.__lur__(): 1,
-            GRV.___lur___(): 3,
-        }
-
-    def plot_case(self, file_name: str = "plot" or None, fillins: bool = False):
+    def plot_case(self, file_name: str = "funkman_plot" or None, fillins: bool = False):
         def data_interpolate(smooth: int = 500, **kwargs):
             ax = kwargs["ax"]
-            x = kwargs["x"]
-            y = kwargs["y"]
+            x_raw = kwargs["x"]
+            y_raw = kwargs["y"]
             context = kwargs["C"]
 
             def downwind_stripper() -> int:
-                x_max = x.max()
+                x_max = x_raw.max()
                 # print(Bcolors.OKCYAN + "x max: " + str(x_max) + Bcolors.ENDC)
                 downwind = False
                 last_x = 9999
                 downwind_index = 0
 
-                for i in range(len(x)):
+                for i in range(len(x_raw)):
                     # jeśli jest za rufą
-                    if x[i] > 0:
+                    if x_raw[i] > 0:
                         # jeśli maleje
-                        if x[i] < last_x:
+                        if x_raw[i] < last_x:
                             # print("fall ", x[i])
-                            last_x = x[i]
+                            last_x = x_raw[i]
                         else:
                             # print("raise", x[i])
                             downwind_index = i
                 return downwind_index
 
-            # downwind_pool = -len(x) + downwind_stripper()
-            # x = x[downwind_pool:]
-            # y = y[downwind_pool:]
+            downwind_pool = -len(x_raw) + downwind_stripper()
+            x = x_raw[downwind_pool:]
+            y = y_raw[downwind_pool:]
 
-            # X_smooth = np.linspace(x[:1], x[-1:], smooth)
-
-            # _f = interp1d(x, y, kind='quadratic')
-            # _dfs = _f(X_smooth)
-            ax.plot(x, y, linewidth=track_line_width, label="Track",
+            ax.plot(x_raw, y_raw, linewidth=track_line_width, label="Track",
                     color=track_line_colour)
             # print(Bcolors.OKBLUE + context + Bcolors.ENDC)
 
@@ -203,44 +61,36 @@ class Analyzer(object):
         limits_x_axis = np.linspace(x_axis_limit_right, x_axis_limit_left, x_axis_limit_left)
 
         # AoA Limits
-        aoa_limits_data = self.__data_limits_aoa()
-        aoa_slo_hi_limit = aoa_limits_data[AoA.slo_hi()]
-        aoa_slo_med_limit = aoa_limits_data[AoA.slo_med()]
-        aoa_slo_lo_limit = aoa_limits_data[AoA.slo_lo()]
-        aoa_ok_limit = aoa_limits_data[AoA.ok()]
-        aoa_fst_lo_limit = aoa_limits_data[AoA.fast_lo()]
-        aoa_fst_med_limit = aoa_limits_data[AoA.fast_med()]
-        aoa_fst_hi_limit = aoa_limits_data[AoA.fast_hi()]
+        aoa_slo_hi_limit = self.__limits_aoa[AoA.slo_hi()]
+        aoa_slo_med_limit = self.__limits_aoa[AoA.slo_med()]
+        aoa_slo_lo_limit = self.__limits_aoa[AoA.slo_lo()]
+        aoa_fst_lo_limit = self.__limits_aoa[AoA.fast_lo()]
+        aoa_fst_med_limit = self.__limits_aoa[AoA.fast_med()]
+        aoa_fst_hi_limit = self.__limits_aoa[AoA.fast_hi()]
 
-        # GRV Limits
-        grv_limits_data = self.__data_limits_grv()
-        grv___lul___limit = grv_limits_data[GRV.___lul___()]
-        grv__lul__limit = grv_limits_data[GRV.__lul__()]
-        grv_lul_limit = grv_limits_data[GRV.lul()]
-        grv_ok_limit = grv_limits_data[GRV.ok()]
-        grv_lur_limit = grv_limits_data[GRV.lur()]
-        grv__lur__limit = grv_limits_data[GRV.__lur__()]
-        grv___lur___limit = grv_limits_data[GRV.___lur___()]
+        # LU Limits
+        lu___lul___limit = self.__limits_lu[GRV.___lul___()]
+        lu__lul__limit = self.__limits_lu[GRV.__lul__()]
+        lu_lul_limit = self.__limits_lu[GRV.lul()]
+        lu_lur_limit = self.__limits_lu[GRV.lur()]
+        lu__lur__limit = self.__limits_lu[GRV.__lur__()]
+        lu___lur___limit = self.__limits_lu[GRV.___lur___()]
 
         # GS Limits
-        gs_limits_data = self.__data_limits_gs()
-        gs___hi___limit = gs_limits_data[GS.___hi___()]
-        gs__hi__limit = gs_limits_data[GS.__hi__()]
-        gs_hi_limit = gs_limits_data[GS.hi()]
-        gs_ok_limit = gs_limits_data[GS.gs()]
-        gs_lo_limit = gs_limits_data[GS.lo()]
-        gs__lo__limit = gs_limits_data[GS.__lo__()]
-        gs___lo___limit = gs_limits_data[GS.___lo___()]
+        gs___hi___limit = self.__limits_gs[GS.___hi___()]
+        gs__hi__limit = self.__limits_gs[GS.__hi__()]
+        gs_hi_limit = self.__limits_gs[GS.hi()]
+        gs_lo_limit = self.__limits_gs[GS.lo()]
+        gs__lo__limit = self.__limits_gs[GS.__lo__()]
+        gs___lo___limit = self.__limits_gs[GS.___lo___()]
 
         # GSE Limits
-        gse_limits_data = self.__data_limits_gse()
-        gse___hi___limit = gse_limits_data[GS.___hi___()]
-        gse__hi__limit = gse_limits_data[GS.__hi__()]
-        gse_hi_limit = gse_limits_data[GS.hi()]
-        gse_ok_limit = gse_limits_data[GS.gs()]
-        gse_lo_limit = gse_limits_data[GS.lo()]
-        gse__lo__limit = gse_limits_data[GS.__lo__()]
-        gse___lo___limit = gse_limits_data[GS.___lo___()]
+        gse___hi___limit = self.__limits_gse[GS.___hi___()]
+        gse__hi__limit = self.__limits_gse[GS.__hi__()]
+        gse_hi_limit = self.__limits_gse[GS.hi()]
+        gse_lo_limit = self.__limits_gse[GS.lo()]
+        gse__lo__limit = self.__limits_gse[GS.__lo__()]
+        gse___lo___limit = self.__limits_gse[GS.___lo___()]
 
         line_alpha = .3
         fill_alpha = .05
@@ -249,6 +99,7 @@ class Analyzer(object):
 
         fig, (ax_grv, ax_gs, ax_aoa, utils) = plt.subplots(4)
         fig.set_size_inches(12, 18)
+
         # fig.text(0.5, 0.05, self.__filename, horizontalalignment='center', verticalalignment='center',
         #          color='red')
 
@@ -275,6 +126,7 @@ class Analyzer(object):
                 axins_grv.set_ylim(y1, y2)
                 axins_grv.text(.5, .9, "LUE [deg/cbls]", horizontalalignment='center',
                                transform=axins_grv.transAxes)
+
                 def lue_plot_limits(limit, colour, label):
                     axins_grv.plot(
                         np.linspace(limit, limit),
@@ -287,20 +139,21 @@ class Analyzer(object):
                         np.linspace(limit_2, limit_2, x1),
                         color=colour, alpha=fill_alpha)
 
-                lue_plot_limits(grv___lul___limit, 'red', '__LUL__')
-                lue_plot_limits(grv__lul__limit, 'orange', 'LUL')
-                lue_plot_limits(grv_lul_limit, 'green', '(LUL)')
-                lue_plot_limits(grv_lur_limit, 'green', '(LUR)')
-                lue_plot_limits(grv__lur__limit, 'orange', 'LUR')
-                lue_plot_limits(grv___lur___limit, 'red', '__LUL__')
+                lue_plot_limits(lu___lul___limit, 'red', '__LUL__')
+                lue_plot_limits(lu__lul__limit, 'orange', 'LUL')
+                lue_plot_limits(lu_lul_limit, 'green', '(LUL)')
+                lue_plot_limits(lu_lur_limit, 'green', '(LUR)')
+                lue_plot_limits(lu__lur__limit, 'orange', 'LUR')
+                lue_plot_limits(lu___lur___limit, 'red', '__LUL__')
 
                 if fillins:
-                    lue_fill_limits(grv___lul___limit, grv__lul__limit, 'red')
-                    lue_fill_limits(grv__lul__limit, grv_lul_limit, 'orange')
-                    lue_fill_limits(grv_lul_limit, grv_lur_limit, 'green')
-                    lue_fill_limits(grv_lur_limit, grv__lur__limit, 'orange')
-                    lue_fill_limits(grv__lur__limit, grv___lur___limit, 'red')
-                data_interpolate(ax=axins_grv, x=Utils.mtrs_to_cbls(dta[K.x()]), y=dta[K.lue()], X=Utils.mtrs_to_cbls(dta[K.x()]),
+                    lue_fill_limits(lu___lul___limit, lu__lul__limit, 'red')
+                    lue_fill_limits(lu__lul__limit, lu_lul_limit, 'orange')
+                    lue_fill_limits(lu_lul_limit, lu_lur_limit, 'green')
+                    lue_fill_limits(lu_lur_limit, lu__lur__limit, 'orange')
+                    lue_fill_limits(lu__lur__limit, lu___lur___limit, 'red')
+                data_interpolate(ax=axins_grv, x=Utils.mtrs_to_cbls(dta[K.x()]), y=dta[K.lue()],
+                                 X=Utils.mtrs_to_cbls(dta[K.x()]),
                                  C="ins_groove")
                 axins_grv.yaxis.tick_right()
                 axins_grv.xaxis.tick_top()
@@ -332,20 +185,19 @@ class Analyzer(object):
             ax_grv.set_xlim(x_axis_limit_right, x_axis_limit_left)
             ax_grv.patch.set_alpha(0)
 
-            grv_plot_limits(grv___lul___limit, 'red', '__LUL__')
-            grv_plot_limits(grv__lul__limit, 'orange', 'LUL')
-            grv_plot_limits(grv_lul_limit, 'green', '(LUL)')
-            # grv_plot_limits(grv_ok_limit, 'black', '__OK__')
-            grv_plot_limits(grv_lur_limit, 'green', '(LUR)')
-            grv_plot_limits(grv__lur__limit, 'orange', 'LUR')
-            grv_plot_limits(grv___lur___limit, 'red', '__LUR__')
+            grv_plot_limits(lu___lul___limit, 'red', '__LUL__')
+            grv_plot_limits(lu__lul__limit, 'orange', 'LUL')
+            grv_plot_limits(lu_lul_limit, 'green', '(LUL)')
+            grv_plot_limits(lu_lur_limit, 'green', '(LUR)')
+            grv_plot_limits(lu__lur__limit, 'orange', 'LUR')
+            grv_plot_limits(lu___lur___limit, 'red', '__LUR__')
 
             if fillins:
-                grv_fill_limits(grv_lul_limit, grv_lur_limit, 'green')
-                grv_fill_limits(grv_lul_limit, grv__lul__limit, 'orange')
-                grv_fill_limits(grv_lur_limit, grv__lur__limit, 'orange')
-                grv_fill_limits(grv__lul__limit, grv___lul___limit, 'red')
-                grv_fill_limits(grv__lur__limit, grv___lur___limit, 'red')
+                grv_fill_limits(lu_lul_limit, lu_lur_limit, 'green')
+                grv_fill_limits(lu_lul_limit, lu__lul__limit, 'orange')
+                grv_fill_limits(lu_lur_limit, lu__lur__limit, 'orange')
+                grv_fill_limits(lu__lul__limit, lu___lul___limit, 'red')
+                grv_fill_limits(lu__lur__limit, lu___lur___limit, 'red')
 
             data_interpolate(ax=ax_grv, x=Utils.mtrs_to_cbls(dta[K.x()]), y=Utils.mtrs_to_cbls(dta[K.z()]), C="groove")
 
@@ -426,7 +278,6 @@ class Analyzer(object):
             gs_plot_limits(gs___hi___limit, 'red', '__HI__')
             gs_plot_limits(gs__hi__limit, 'orange', 'H')
             gs_plot_limits(gs_hi_limit, 'green', '(H)')
-            # gs_plot_limits(gs_ok_limit, 'black', '__OK__')
             gs_plot_limits(gs_lo_limit, 'green', '(LO)')
             gs_plot_limits(gs__lo__limit, 'orange', 'LO')
             gs_plot_limits(gs___lo___limit, 'red', '__LO__')
@@ -447,8 +298,8 @@ class Analyzer(object):
 
         def plotter_aoa():
             # AoA
-            aoa_y_axis_limit_low = aoa_limits_data[AoA.fast_hi()] - .5
-            aoa_y_axis_limit_hi = aoa_limits_data[AoA.slo_hi()] + .5
+            aoa_y_axis_limit_low = self.__limits_aoa[AoA.fast_hi()] - .5
+            aoa_y_axis_limit_hi = self.__limits_aoa[AoA.slo_hi()] + .5
             ax_aoa.set_ylim(aoa_y_axis_limit_low, aoa_y_axis_limit_hi)
             ax_aoa.set_xlim(x_axis_limit_right, x_axis_limit_left)
             ax_aoa.set_ylabel('AoA [deg]')
@@ -470,7 +321,6 @@ class Analyzer(object):
             aoa_plot_limits(aoa_slo_hi_limit, 'red', "__SLO__")
             aoa_plot_limits(aoa_slo_med_limit, 'orange', "SLO")
             aoa_plot_limits(aoa_slo_lo_limit, 'green', "(SLO)")
-            # aoa_plot_limits(aoa_ok_limit, 'black', "__OK__")
             aoa_plot_limits(aoa_fst_lo_limit, 'green', "(F)")
             aoa_plot_limits(aoa_fst_med_limit, 'orange', "F")
             aoa_plot_limits(aoa_fst_hi_limit, 'red', "__F__")
@@ -537,7 +387,7 @@ class Analyzer(object):
 
             plot_lin_limits(-2.5, 'green', 'roll limit', axins_roll)
             plot_lin_limits(2.5, 'green', 'roll limit', axins_roll)
-            data_interpolate(ax=axins_vy, x=Utils.mtrs_to_cbls(dta[K.x()]), y=dta[K.vy()]*196.85, C="ins_vy")
+            data_interpolate(ax=axins_vy, x=Utils.mtrs_to_cbls(dta[K.x()]), y=dta[K.vy()] * 196.85, C="ins_vy")
             data_interpolate(ax=axins_roll, x=Utils.mtrs_to_cbls(dta[K.x()]), y=dta[K.roll()], C="ins_roll")
 
         plotter_groove()
@@ -585,13 +435,13 @@ class Analyzer(object):
                                     clip_on=True)
             elif self.__oth_data["points"] == 4:
                 fig.figure.figimage(plt.imread(assets.png_4pts), 0, 0, alpha=1, zorder=2,
-                                clip_on=True)
+                                    clip_on=True)
             elif self.__oth_data["points"] == 5:
                 fig.figure.figimage(plt.imread(assets.png_5pts), 0, 0, alpha=1, zorder=2,
-                                clip_on=True)
+                                    clip_on=True)
 
         def overlay_stamps_and_comments():
-            #Stamps
+            # Stamps
             if self.__oth_data["case"] == 3:
                 fig.figure.figimage(plt.imread(assets.png_stamp_nightpass), 0, 0, alpha=1, zorder=4,
                                     clip_on=True)
@@ -629,8 +479,8 @@ class Analyzer(object):
                 fig.figure.figimage(plt.imread(assets.png_stamp_error), 0, 0, alpha=.3, zorder=4,
                                     clip_on=True)
 
-        overlay_squadron()
-        overlay_points()
+        # overlay_squadron()
+        # overlay_points()
         # overlay_stamps_and_comments()
 
         # fig.figure.figimage(plt.imread("/home/yautay/repo/dcs-bot/assets/testpic.png"), 0, 0, alpha=0.2, zorder=-1,
@@ -643,4 +493,3 @@ class Analyzer(object):
             fig.savefig(file_name + "-alpha", transparent=True)
 
         return fig
-

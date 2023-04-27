@@ -2,9 +2,9 @@ import socketserver
 import json
 import os
 
-from src.plot.Plot import Plot as FunkPlot
+from src.plotters.funkman_plot.FunkmanPlot import Plot as FunkPlot
 from src.bot.Bot import Bot
-from src.precise_plot.modules.Plotter import Plotter as YautayPlot
+from src.plotters.yautay_plot.YautayPlotter import YautayPlotter as YautayPlot
 
 
 class Handler(socketserver.BaseRequestHandler):

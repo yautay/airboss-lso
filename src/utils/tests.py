@@ -3,7 +3,7 @@ Test cases.
 """
 
 from random import randint
-from src.plot.Plot import Plot
+from src.plotters.funkman_plot.FunkmanPlot import Plot
 from src.utils.utils import read_trap_csv
 
 
@@ -127,7 +127,7 @@ def get_result_trap(trapfile: str or dict, csv: bool = False) -> dict:
 
 def test_strafe(funkplot: Plot):
     # Debug info.
-    print("Testing StrafeRun plot")
+    print("Testing StrafeRun funkman_plot")
 
     # Get result.
     resultStrafe = get_result_strafe()
@@ -140,7 +140,7 @@ def test_strafe(funkplot: Plot):
 
 def test_bomb(funkplot: Plot):
     # Debug info.
-    print("Testing BombRun plot")
+    print("Testing BombRun funkman_plot")
 
     # Get result.
     resultBomb = get_result_bomb()
@@ -153,7 +153,7 @@ def test_bomb(funkplot: Plot):
 
 def test_trap(funkplot: Plot, trapfile: str):
     # Debug info.
-    print(f"Testing TrapSheet plot from {trapfile}")
+    print(f"Testing TrapSheet funkman_plot from {trapfile}")
 
     # Get result.
     result = get_result_trap(trapfile)

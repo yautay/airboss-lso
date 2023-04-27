@@ -1,5 +1,5 @@
 from root import ROOT_DIR
-from src.plot.Plot import Plot
+from src.plotters.funkman_plot.FunkmanPlot import Plot
 from src.utils.tests import get_result_trap
 import os
 

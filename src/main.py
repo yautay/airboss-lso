@@ -1,5 +1,4 @@
-from src.plot.Plot import Plot
-from src.precise_plot.modules.Plotter import Plotter
+from src.plotters.funkman_plot.FunkmanPlot import Plot
 from src.sock.Sock import Socket
 from src.bot.Bot import Bot
 
@@ -28,7 +27,7 @@ class Main:
         # Read config file.
         set_ini(self)
 
-        # Create plot instance.
+        # Create funkman_plot instance.
         self.funkplot = Plot()
 
         # Create bot instance.

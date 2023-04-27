@@ -53,7 +53,7 @@ class AircraftType(Enum):
 class Plot:
     # /home/yautay/repo/FunkMan/assets/BombCircle.png
     def __init__(self) -> None:
-        ImagePath = os.path.join(ROOT_DIR, "src", "plot", "assets")
+        ImagePath = os.path.join(ROOT_DIR, "src", "plotters", "funkman_plot", "assets")
         print(ImagePath)
         # Info message.
         print(f"Init FunkPlot: Reading images from {ImagePath}...")
@@ -309,7 +309,7 @@ class Plot:
             x, y = self._Polar2Cart(r, p)
 
             # Plot red "x" inside.
-            # ax.plot(0, 0, "rX", zorder=15, alpha=0.5)
+            # ax.funkman_plot(0, 0, "rX", zorder=15, alpha=0.5)
 
             # Bullet image.
             bullet = 10
@@ -499,7 +499,7 @@ class Plot:
         else:
             # These are the LHA images:
 
-            # Side view for the glideslope plot.
+            # Side view for the glideslope funkman_plot.
             axs[0].figure.figimage(self.imageLHAside, 910, 560, alpha=0.75, zorder=1, clip_on=True)
 
             # Top-down view.
@@ -649,7 +649,7 @@ class Plot:
         # Set title.
         fig.suptitle(title, fontsize=12, color=PlotColor.LABEL.value)
 
-        # Show plot.
+        # Show funkman_plot.
         if filename:
             plt.savefig(filename)
 

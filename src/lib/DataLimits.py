@@ -2,7 +2,7 @@ from src.lib.Keys import \
     KeysAoA as AoA, \
     KeysGRV as GRV, \
     KeysGS as GS
-from Utils import Utils
+from src.lib.Utils import Utils
 
 
 class DataLimits:

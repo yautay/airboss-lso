@@ -1,98 +1,25 @@
-import datetime
-import json
 import math
 import numpy as np
 from matplotlib import pyplot as plt
 from scipy.interpolate import interp1d
-
-from src.precise_plot.modules.Keys import KeysCSV as K, KeysGRV as GRV, KeysGS as GS, KeysAoA as AoA
-from src.precise_plot.modules.Utils import Utils
-from src.precise_plot.assets import assets
-from src.lib.DataLimits import DataLimits
-from src.utils.colors import Colors
+from src.lib.Keys import KeysCSV as K, KeysGRV as GRV, KeysGS as GS, KeysAoA as AoA
+from src.lib.Utils import Utils
+from src.plotters.yautay_plot.assets import assets
+from src.lib.ParserAirbossData import ParserAirbossData
 
 
-class Plotter(object):
-    def __init__(self,  dump_data: bool = False):
-        self.dump_data = dump_data
-        self.__data = dict
-        self.__airframe_index = int
-        self.__limits_aoa = dict
-        self.__limits_lu = dict
-        self.__limits_lue = dict
-        self.__limits_gs = dict
-        self.__limits_gse = dict
+class YautayPlotter(object):
+    def __init__(self,  data_object : ParserAirbossData):
+        self.__data = data_object.data
+        self.__oth_data = data_object.oth_data
+        self.__airframe_index = data_object.airframe_index
+        self.__limits_aoa = data_object.limits_aoa
+        self.__limits_lu = data_object.limits_lu
+        self.__limits_lue = data_object.limits_lue
+        self.__limits_gs = data_object.limits_gs
+        self.__limits_gse = data_object.limits_gse
 
-    def init_data(self, result: dict):
-        now = datetime.datetime.now().strftime("%Y_%m_%d_%I_%M")
-        file_name = now + "_trap_file.json"
-        if self.dump_data:
-            try:
-                with open(file_name, "w") as file:
-                    file.write(json.dumps(result))
-                    print("Plotter Class debug msg\n")
-                    print(datetime.datetime.now().isoformat() + "\n")
-                    print(json.dumps(result))
-                    print("END\n")
-            except Exception as e:
-                print(f"{Colors.FAIL} e {Colors.ENDC}")
-
-        self.__data = {
-            K.x(): -np.array(result["trapsheet"][K.x()]),
-            K.z(): np.array(result["trapsheet"][K.z()]),
-            K.aoa(): np.array(result["trapsheet"][K.aoa()]),
-            K.alt(): np.array(result["trapsheet"][K.alt()]),
-            K.vy(): np.array(result["trapsheet"][K.vy()]),
-            K.roll(): np.array(result["trapsheet"][K.roll()]),
-            K.lue(): -np.array(result["trapsheet"][K.lue()]),
-            K.gse(): np.array(result["trapsheet"][K.gse()]),
-        }
-
-        def get_val(table, key, nil="", precision=None):
-            """
-            Get table value.
-            """
-            if key in table:
-                value = table[key]
-                if value == "false":
-                    return False
-                elif value == "true":
-                    return True
-                else:
-                    if precision != None:
-                        return str(round(value, precision))
-                    else:
-                        return value
-            else:
-                return nil
-
-        self.__oth_data = {
-            "actype": get_val(result, "airframe", "Unkown"),
-            "Tgroove": get_val(result, "Tgroove", "?", 1),
-
-            "player": get_val(result, "name", "Ghostrider"),
-            "grade": get_val(result, "grade", "?"),
-            "points": get_val(result, "points", "?"),
-            "details": get_val(result, "details"),
-            "case": get_val(result, "case", "?"),
-            "wire": get_val(result, "wire", "?"),
-
-            "carriertype": get_val(result, "carriertype", "?"),
-            "carriername": get_val(result, "carriername", "?"),
-            "landingdist": get_val(result, "landingdist", -86),
-            "windondeck": get_val(result, "wind", "?", 1),
-            "missiontime": get_val(result, "mitime", "?"),
-            "missiondate": get_val(result, "midate", "?"),
-            "theatre": get_val(result, "theatre", "Unknown Map")
-        }
-
-        self.__airframe_index = DataLimits.airframe_context(self.__oth_data["actype"])
-        self.__limits_aoa = DataLimits.data_limits_aoa(self.__airframe_index)
-        self.__limits_lu = DataLimits.data_limits_lu()
-        self.__limits_gs = DataLimits.data_limits_gs(self.__airframe_index)
-        self.__limits_gse = DataLimits.data_limits_gse(self.__airframe_index)
-
-    def plot_case(self, file_name: str = "plot" or None, fillins: bool = False):
+    def plot_case(self, file_name: str = "funkman_plot" or None, fillins: bool = False):
         def data_interpolate(smooth: int = 500, **kwargs):
             ax = kwargs["ax"]
             x = kwargs["x"]
@@ -262,7 +189,6 @@ class Plotter(object):
             grv_plot_limits(lu___lul___limit, 'red', '__LUL__')
             grv_plot_limits(lu__lul__limit, 'orange', 'LUL')
             grv_plot_limits(lu_lul_limit, 'green', '(LUL)')
-            # grv_plot_limits(lu_ok_limit, 'black', '__OK__')
             grv_plot_limits(lu_lur_limit, 'green', '(LUR)')
             grv_plot_limits(lu__lur__limit, 'orange', 'LUR')
             grv_plot_limits(lu___lur___limit, 'red', '__LUR__')
@@ -353,7 +279,6 @@ class Plotter(object):
             gs_plot_limits(gs___hi___limit, 'red', '__HI__')
             gs_plot_limits(gs__hi__limit, 'orange', 'H')
             gs_plot_limits(gs_hi_limit, 'green', '(H)')
-            # gs_plot_limits(gs_ok_limit, 'black', '__OK__')
             gs_plot_limits(gs_lo_limit, 'green', '(LO)')
             gs_plot_limits(gs__lo__limit, 'orange', 'LO')
             gs_plot_limits(gs___lo___limit, 'red', '__LO__')
@@ -374,8 +299,8 @@ class Plotter(object):
 
         def plotter_aoa():
             # AoA
-            aoa_y_axis_limit_low = aoa_limits_data[AoA.fast_hi()] - .5
-            aoa_y_axis_limit_hi = aoa_limits_data[AoA.slo_hi()] + .5
+            aoa_y_axis_limit_low = self.__limits_aoa[AoA.fast_hi()] - .5
+            aoa_y_axis_limit_hi = self.__limits_aoa[AoA.slo_hi()] + .5
             ax_aoa.set_ylim(aoa_y_axis_limit_low, aoa_y_axis_limit_hi)
             ax_aoa.set_xlim(x_axis_limit_right, x_axis_limit_left)
             ax_aoa.set_ylabel('AoA [deg]')
@@ -397,7 +322,6 @@ class Plotter(object):
             aoa_plot_limits(aoa_slo_hi_limit, 'red', "__SLO__")
             aoa_plot_limits(aoa_slo_med_limit, 'orange', "SLO")
             aoa_plot_limits(aoa_slo_lo_limit, 'green', "(SLO)")
-            # aoa_plot_limits(aoa_ok_limit, 'black', "__OK__")
             aoa_plot_limits(aoa_fst_lo_limit, 'green', "(F)")
             aoa_plot_limits(aoa_fst_med_limit, 'orange', "F")
             aoa_plot_limits(aoa_fst_hi_limit, 'red', "__F__")
@@ -512,10 +436,10 @@ class Plotter(object):
                                     clip_on=True)
             elif self.__oth_data["points"] == 4:
                 fig.figure.figimage(plt.imread(assets.png_4pts), 0, 0, alpha=1, zorder=2,
-                                clip_on=True)
+                                    clip_on=True)
             elif self.__oth_data["points"] == 5:
                 fig.figure.figimage(plt.imread(assets.png_5pts), 0, 0, alpha=1, zorder=2,
-                                clip_on=True)
+                                    clip_on=True)
 
         def overlay_stamps_and_comments():
             #Stamps

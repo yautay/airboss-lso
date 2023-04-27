@@ -6,7 +6,7 @@ import numpy as np
 from root import ROOT_DIR
 from src.lib.Bcolors import Bcolors as Colors
 from src.lib.DataLimits import DataLimits
-from src.precise_plot.modules.Keys import KeysCSV as K
+from src.lib.Keys import KeysCSV as K
 
 
 class ParserAirbossData:
@@ -21,6 +21,38 @@ class ParserAirbossData:
         self.__limits_gse = dict
         self.__dump_name = str
         self.dump_data = dump_data
+
+    @property
+    def data(self):
+        return self.__data
+
+    @property
+    def oth_data(self):
+        return self.__oth_data
+
+    @property
+    def airframe_index(self):
+        return self.__airframe_index
+
+    @property
+    def limits_aoa(self):
+        return self.__limits_aoa
+
+    @property
+    def limits_lu(self):
+        return self.__limits_lu
+
+    @property
+    def limits_lue(self):
+        return self.__limits_lue
+
+    @property
+    def limits_gs(self):
+        return self.__limits_gs
+
+    @property
+    def limits_gse(self):
+        return self.__limits_gse
 
     def init_data(self, result: dict):
         now = datetime.datetime.now().strftime("%Y_%m_%d_%I_%M")
@@ -47,7 +79,7 @@ class ParserAirbossData:
             K.gse(): np.array(result["trapsheet"][K.gse()]),
         }
 
-        def get_val(table: dict, key: str, nil: str or int = "", precision: int or None = None) -> str or int:
+        def __get_val(table: dict, key: str, nil: str or int = "", precision: int or None = None) -> str or int:
             """
             Get table value.
             """
@@ -66,25 +98,24 @@ class ParserAirbossData:
                 return nil
 
         self.__oth_data = {
-            "actype": get_val(result, "airframe", "Unkown"),
-            "Tgroove": get_val(result, "Tgroove", "?", 1),
+            "actype": __get_val(result, "airframe", "Unkown"),
+            "Tgroove": __get_val(result, "Tgroove", "?", 1),
 
-            "player": get_val(result, "name", "Ghostrider"),
-            "grade": get_val(result, "grade", "?"),
-            "points": get_val(result, "points", "?"),
-            "details": get_val(result, "details"),
-            "case": get_val(result, "case", "?"),
-            "wire": get_val(result, "wire", "?"),
+            "player": __get_val(result, "name", "Ghostrider"),
+            "grade": __get_val(result, "grade", "?"),
+            "points": __get_val(result, "points", "?"),
+            "details": __get_val(result, "details"),
+            "case": __get_val(result, "case", "?"),
+            "wire": __get_val(result, "wire", "?"),
 
-            "carriertype": get_val(result, "carriertype", "?"),
-            "carriername": get_val(result, "carriername", "?"),
-            "landingdist": get_val(result, "landingdist", -86),
-            "windondeck": get_val(result, "wind", "?", 1),
-            "missiontime": get_val(result, "mitime", "?"),
-            "missiondate": get_val(result, "midate", "?"),
-            "theatre": get_val(result, "theatre", "Unknown Map")
+            "carriertype": __get_val(result, "carriertype", "?"),
+            "carriername": __get_val(result, "carriername", "?"),
+            "landingdist": __get_val(result, "landingdist", -86),
+            "windondeck": __get_val(result, "wind", "?", 1),
+            "missiontime": __get_val(result, "mitime", "?"),
+            "missiondate": __get_val(result, "midate", "?"),
+            "theatre": __get_val(result, "theatre", "Unknown Map")
         }
-
         self.__airframe_index = DataLimits.airframe_context(self.__oth_data["actype"])
         self.__limits_aoa = DataLimits.data_limits_aoa(self.__airframe_index)
         self.__limits_lu = DataLimits.data_limits_lu()
