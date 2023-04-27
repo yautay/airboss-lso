@@ -54,9 +54,12 @@ class ParserAirbossData:
     def limits_gse(self):
         return self.__limits_gse
 
-    def init_data(self, result: dict):
+    def init_data(self, result: dict, filename: str or None = None):
         now = datetime.datetime.now().strftime("%Y_%m_%d_%I_%M")
-        self.__dump_name = now + "_trap_file.json"
+        if filename:
+            self.__dump_name = filename
+        else:
+            self.__dump_name = now + "_trap_file.json"
         if self.dump_data:
             try:
                 with open(os.path.join(ROOT_DIR, "tests", "dumps", self.__dump_name), "w") as file:
@@ -90,10 +93,7 @@ class ParserAirbossData:
         }
 
         def __get_val(table: dict, key: str, nil: str or int = "", precision: int or None = None) -> str or int:
-            """
-            Get table value.
-            """
-            if key in table:
+            if key in table.keys():
                 value = table[key]
                 if value == "false":
                     return False
@@ -133,11 +133,9 @@ class ParserAirbossData:
         self.__limits_gse = DataLimits.data_limits_gse(self.__airframe_index)
 
     def dump_data_to_json(self):
-        with open(os.path.join(ROOT_DIR, "tests", "results", "data", "json", "data_" + self.__dump_name),
-                  "w") as data_dump:
+        with open(self.__dump_name, "w") as data_dump:
             data_dump.write(json.dumps(self.__raw_data, indent=4))
-        with open(os.path.join(ROOT_DIR, "tests", "results", "data", "json", "data_oth" + self.__dump_name),
-                  "w") as oth_data_dump:
+        with open(self.__dump_name, "w") as oth_data_dump:
             oth_data_dump.write(json.dumps(self.__oth_data, indent=4))
 
 
@@ -149,7 +147,7 @@ class DownwindStripper:
             # astern
             if x[i] > 0:
                 # closing range
-                if x[i] < x[i-1]:
+                if x[i] < x[i - 1]:
                     break
                 # farthest astern
                 else:
