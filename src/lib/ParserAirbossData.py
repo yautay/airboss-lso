@@ -144,21 +144,14 @@ class ParserAirbossData:
 class DownwindStripper:
     @staticmethod
     def downwind_stripper(x: np.array) -> int:
-        print(x)
-        x_max = x.max()
-        print(Colors.OKCYAN + "x max: " + str(x_max) + Colors.ENDC)
-        downwind = False
-        last_x = 9999
-        downwind_index = 0
-
+        downwind_index = int
         for i in range(len(x)):
-            # jeśli jest za rufą
+            # astern
             if x[i] > 0:
-                # jeśli maleje
-                if x[i] < last_x:
-                    # print("fall ", x[i])
-                    last_x = x[i]
+                # closing range
+                if x[i] < x[i-1]:
+                    break
+                # farthest astern
                 else:
-                    # print("raise", x[i])
                     downwind_index = i
         return downwind_index
