@@ -5,7 +5,8 @@ from root import ROOT_DIR
 folders = [
     os.path.join(ROOT_DIR, "tests", "results", "funkman"),
     os.path.join(ROOT_DIR, "tests", "results", "yautay"),
-    os.path.join(ROOT_DIR, "tests", "results", "data")
+    os.path.join(ROOT_DIR, "tests", "results", "data", "json"),
+    os.path.join(ROOT_DIR, "tests", "results", "data", "raw_plots")
 ]
 
 for folder in folders:

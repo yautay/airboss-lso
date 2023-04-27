@@ -8,7 +8,7 @@ from src.data_analyzer.modules.Analyzer import Analyzer
 
 for filename in os.listdir(os.path.join(ROOT_DIR, "tests", "dumps")):
     file_path = os.path.join(os.path.join(ROOT_DIR, "tests", "dumps"), filename)
-    plot_path = os.path.join(os.path.join(ROOT_DIR, "tests", "results", "data"), filename.strip(".json"))
+    plot_path = os.path.join(os.path.join(ROOT_DIR, "tests", "results", "data", "raw_plots", filename.strip(".json")))
 
     with open(file_path, "r") as dump_file:
         try:

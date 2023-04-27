@@ -8,12 +8,20 @@ from scipy.interpolate import interp1d
 from src.precise_plot.modules.Keys import KeysCSV as K, KeysGRV as GRV, KeysGS as GS, KeysAoA as AoA
 from src.precise_plot.modules.Utils import Utils
 from src.precise_plot.assets import assets
+from src.lib.DataLimits import DataLimits
 from src.utils.colors import Colors
 
 
 class Plotter(object):
     def __init__(self,  dump_data: bool = False):
         self.dump_data = dump_data
+        self.__data = dict
+        self.__airframe_index = int
+        self.__limits_aoa = dict
+        self.__limits_lu = dict
+        self.__limits_lue = dict
+        self.__limits_gs = dict
+        self.__limits_gse = dict
 
     def init_data(self, result: dict):
         now = datetime.datetime.now().strftime("%Y_%m_%d_%I_%M")
@@ -78,97 +86,11 @@ class Plotter(object):
             "theatre": get_val(result, "theatre", "Unknown Map")
         }
 
-        self.__airframe = self.__airframe_context()
-        self.__limits_aoa = self.__data_limits_aoa()
-        self.__limits_grv = self.__data_limits_grv()
-        self.__limits_gs = self.__data_limits_gs()
-    def __airframe_context(self, text: bool = False):
-        """
-        1: FA-18C
-        2: F-14
-        3: AV-8
-        """
-        if "FA-18C" in self.__oth_data["actype"]:
-            if text:
-                return "F/A-18C"
-            return 1
-        elif "F-14" in self.__oth_data["actype"]:
-            if text:
-                return "F-14"
-            return 2
-        elif "AV-8" in self.__oth_data["actype"]:
-            if text:
-                return "AV-8B"
-            return 9
-
-    def __data_limits_aoa(self):
-        if self.__airframe == 1:
-            # F18
-            return {
-                AoA.slo_hi(): 9.8,
-                AoA.slo_med(): 9.3,
-                AoA.slo_lo(): 8.8,
-                AoA.ok(): 8.1,
-                AoA.fast_lo(): 7.4,
-                AoA.fast_med(): 6.9,
-                AoA.fast_hi(): 6.3,
-            }
-
-    def __data_limits_gs(self):
-        if self.__airframe == 9:
-            return {
-                GS.___hi___(): 5.4,
-                GS.__hi__(): 4.9,
-                GS.hi(): 4.2,
-                GS.gs(): 3.5,
-                GS.lo(): 3,
-                GS.__lo__(): 2.3,
-                GS.___lo___(): 2.0,
-            }
-        else:
-            return {
-                GS.___hi___(): 5.0,
-                GS.__hi__(): 4.3,
-                GS.hi(): 3.9,
-                GS.gs(): 3.5,
-                GS.lo(): 3.2,
-                GS.__lo__(): 2.9,
-                GS.___lo___(): 2.6,
-            }
-
-    def __data_limits_gse(self):
-        if self.__airframe == 9:
-            return {
-                GS.___hi___(): 1.9,
-                GS.__hi__(): 1.4,
-                GS.hi(): 0.7,
-                GS.gs(): 0,
-                GS.lo(): -0.5,
-                GS.__lo__(): -1.2,
-                GS.___lo___(): -1.5,
-            }
-        else:
-            return {
-                GS.___hi___(): 1.5,
-                GS.__hi__(): 0.8,
-                GS.hi(): 0.4,
-                GS.gs(): 0,
-                GS.lo(): -0.3,
-                GS.__lo__(): -0.6,
-                GS.___lo___(): -0.9,
-            }
-
-    @staticmethod
-    def __data_limits_grv():
-        return {
-            GRV.___lul___(): -3,
-            GRV.__lul__(): -1,
-            GRV.lul(): -.5,
-            GRV.ok(): 0,
-            GRV.lur(): .5,
-            GRV.__lur__(): 1,
-            GRV.___lur___(): 3,
-        }
+        self.__airframe_index = DataLimits.airframe_context(self.__oth_data["actype"])
+        self.__limits_aoa = DataLimits.data_limits_aoa(self.__airframe_index)
+        self.__limits_lu = DataLimits.data_limits_lu()
+        self.__limits_gs = DataLimits.data_limits_gs(self.__airframe_index)
+        self.__limits_gse = DataLimits.data_limits_gse(self.__airframe_index)
 
     def plot_case(self, file_name: str = "plot" or None, fillins: bool = False):
         def data_interpolate(smooth: int = 500, **kwargs):
@@ -216,44 +138,36 @@ class Plotter(object):
         limits_x_axis = np.linspace(x_axis_limit_right, x_axis_limit_left, x_axis_limit_left)
 
         # AoA Limits
-        aoa_limits_data = self.__data_limits_aoa()
-        aoa_slo_hi_limit = aoa_limits_data[AoA.slo_hi()]
-        aoa_slo_med_limit = aoa_limits_data[AoA.slo_med()]
-        aoa_slo_lo_limit = aoa_limits_data[AoA.slo_lo()]
-        aoa_ok_limit = aoa_limits_data[AoA.ok()]
-        aoa_fst_lo_limit = aoa_limits_data[AoA.fast_lo()]
-        aoa_fst_med_limit = aoa_limits_data[AoA.fast_med()]
-        aoa_fst_hi_limit = aoa_limits_data[AoA.fast_hi()]
+        aoa_slo_hi_limit = self.__limits_aoa[AoA.slo_hi()]
+        aoa_slo_med_limit = self.__limits_aoa[AoA.slo_med()]
+        aoa_slo_lo_limit = self.__limits_aoa[AoA.slo_lo()]
+        aoa_fst_lo_limit = self.__limits_aoa[AoA.fast_lo()]
+        aoa_fst_med_limit = self.__limits_aoa[AoA.fast_med()]
+        aoa_fst_hi_limit = self.__limits_aoa[AoA.fast_hi()]
 
-        # GRV Limits
-        grv_limits_data = self.__data_limits_grv()
-        grv___lul___limit = grv_limits_data[GRV.___lul___()]
-        grv__lul__limit = grv_limits_data[GRV.__lul__()]
-        grv_lul_limit = grv_limits_data[GRV.lul()]
-        grv_ok_limit = grv_limits_data[GRV.ok()]
-        grv_lur_limit = grv_limits_data[GRV.lur()]
-        grv__lur__limit = grv_limits_data[GRV.__lur__()]
-        grv___lur___limit = grv_limits_data[GRV.___lur___()]
+        # LU Limits
+        lu___lul___limit = self.__limits_lu[GRV.___lul___()]
+        lu__lul__limit = self.__limits_lu[GRV.__lul__()]
+        lu_lul_limit = self.__limits_lu[GRV.lul()]
+        lu_lur_limit = self.__limits_lu[GRV.lur()]
+        lu__lur__limit = self.__limits_lu[GRV.__lur__()]
+        lu___lur___limit = self.__limits_lu[GRV.___lur___()]
 
         # GS Limits
-        gs_limits_data = self.__data_limits_gs()
-        gs___hi___limit = gs_limits_data[GS.___hi___()]
-        gs__hi__limit = gs_limits_data[GS.__hi__()]
-        gs_hi_limit = gs_limits_data[GS.hi()]
-        gs_ok_limit = gs_limits_data[GS.gs()]
-        gs_lo_limit = gs_limits_data[GS.lo()]
-        gs__lo__limit = gs_limits_data[GS.__lo__()]
-        gs___lo___limit = gs_limits_data[GS.___lo___()]
+        gs___hi___limit = self.__limits_gs[GS.___hi___()]
+        gs__hi__limit = self.__limits_gs[GS.__hi__()]
+        gs_hi_limit = self.__limits_gs[GS.hi()]
+        gs_lo_limit = self.__limits_gs[GS.lo()]
+        gs__lo__limit = self.__limits_gs[GS.__lo__()]
+        gs___lo___limit = self.__limits_gs[GS.___lo___()]
 
         # GSE Limits
-        gse_limits_data = self.__data_limits_gse()
-        gse___hi___limit = gse_limits_data[GS.___hi___()]
-        gse__hi__limit = gse_limits_data[GS.__hi__()]
-        gse_hi_limit = gse_limits_data[GS.hi()]
-        gse_ok_limit = gse_limits_data[GS.gs()]
-        gse_lo_limit = gse_limits_data[GS.lo()]
-        gse__lo__limit = gse_limits_data[GS.__lo__()]
-        gse___lo___limit = gse_limits_data[GS.___lo___()]
+        gse___hi___limit = self.__limits_gse[GS.___hi___()]
+        gse__hi__limit = self.__limits_gse[GS.__hi__()]
+        gse_hi_limit = self.__limits_gse[GS.hi()]
+        gse_lo_limit = self.__limits_gse[GS.lo()]
+        gse__lo__limit = self.__limits_gse[GS.__lo__()]
+        gse___lo___limit = self.__limits_gse[GS.___lo___()]
 
         line_alpha = .3
         fill_alpha = .05
@@ -300,19 +214,19 @@ class Plotter(object):
                         np.linspace(limit_2, limit_2, x1),
                         color=colour, alpha=fill_alpha)
 
-                lue_plot_limits(grv___lul___limit, 'red', '__LUL__')
-                lue_plot_limits(grv__lul__limit, 'orange', 'LUL')
-                lue_plot_limits(grv_lul_limit, 'green', '(LUL)')
-                lue_plot_limits(grv_lur_limit, 'green', '(LUR)')
-                lue_plot_limits(grv__lur__limit, 'orange', 'LUR')
-                lue_plot_limits(grv___lur___limit, 'red', '__LUL__')
+                lue_plot_limits(lu___lul___limit, 'red', '__LUL__')
+                lue_plot_limits(lu__lul__limit, 'orange', 'LUL')
+                lue_plot_limits(lu_lul_limit, 'green', '(LUL)')
+                lue_plot_limits(lu_lur_limit, 'green', '(LUR)')
+                lue_plot_limits(lu__lur__limit, 'orange', 'LUR')
+                lue_plot_limits(lu___lur___limit, 'red', '__LUL__')
 
                 if fillins:
-                    lue_fill_limits(grv___lul___limit, grv__lul__limit, 'red')
-                    lue_fill_limits(grv__lul__limit, grv_lul_limit, 'orange')
-                    lue_fill_limits(grv_lul_limit, grv_lur_limit, 'green')
-                    lue_fill_limits(grv_lur_limit, grv__lur__limit, 'orange')
-                    lue_fill_limits(grv__lur__limit, grv___lur___limit, 'red')
+                    lue_fill_limits(lu___lul___limit, lu__lul__limit, 'red')
+                    lue_fill_limits(lu__lul__limit, lu_lul_limit, 'orange')
+                    lue_fill_limits(lu_lul_limit, lu_lur_limit, 'green')
+                    lue_fill_limits(lu_lur_limit, lu__lur__limit, 'orange')
+                    lue_fill_limits(lu__lur__limit, lu___lur___limit, 'red')
                 data_interpolate(ax=axins_grv, x=Utils.mtrs_to_cbls(dta[K.x()]), y=dta[K.lue()], X=Utils.mtrs_to_cbls(dta[K.x()]),
                                  C="ins_groove")
                 axins_grv.yaxis.tick_right()
@@ -345,20 +259,20 @@ class Plotter(object):
             ax_grv.set_xlim(x_axis_limit_right, x_axis_limit_left)
             ax_grv.patch.set_alpha(0)
 
-            grv_plot_limits(grv___lul___limit, 'red', '__LUL__')
-            grv_plot_limits(grv__lul__limit, 'orange', 'LUL')
-            grv_plot_limits(grv_lul_limit, 'green', '(LUL)')
-            # grv_plot_limits(grv_ok_limit, 'black', '__OK__')
-            grv_plot_limits(grv_lur_limit, 'green', '(LUR)')
-            grv_plot_limits(grv__lur__limit, 'orange', 'LUR')
-            grv_plot_limits(grv___lur___limit, 'red', '__LUR__')
+            grv_plot_limits(lu___lul___limit, 'red', '__LUL__')
+            grv_plot_limits(lu__lul__limit, 'orange', 'LUL')
+            grv_plot_limits(lu_lul_limit, 'green', '(LUL)')
+            # grv_plot_limits(lu_ok_limit, 'black', '__OK__')
+            grv_plot_limits(lu_lur_limit, 'green', '(LUR)')
+            grv_plot_limits(lu__lur__limit, 'orange', 'LUR')
+            grv_plot_limits(lu___lur___limit, 'red', '__LUR__')
 
             if fillins:
-                grv_fill_limits(grv_lul_limit, grv_lur_limit, 'green')
-                grv_fill_limits(grv_lul_limit, grv__lul__limit, 'orange')
-                grv_fill_limits(grv_lur_limit, grv__lur__limit, 'orange')
-                grv_fill_limits(grv__lul__limit, grv___lul___limit, 'red')
-                grv_fill_limits(grv__lur__limit, grv___lur___limit, 'red')
+                grv_fill_limits(lu_lul_limit, lu_lur_limit, 'green')
+                grv_fill_limits(lu_lul_limit, lu__lul__limit, 'orange')
+                grv_fill_limits(lu_lur_limit, lu__lur__limit, 'orange')
+                grv_fill_limits(lu__lul__limit, lu___lul___limit, 'red')
+                grv_fill_limits(lu__lur__limit, lu___lur___limit, 'red')
 
             data_interpolate(ax=ax_grv, x=Utils.mtrs_to_cbls(dta[K.x()]), y=Utils.mtrs_to_cbls(dta[K.z()]), C="groove")
 

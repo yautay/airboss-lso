@@ -1,9 +1,7 @@
 from src.lib.Keys import \
     KeysAoA as AoA, \
     KeysGRV as GRV, \
-    KeysGS as GS, \
-    KeysCSV as CSV, \
-    KeysAirframes as Frame
+    KeysGS as GS
 from Utils import Utils
 
 
@@ -36,12 +34,12 @@ class DataLimits:
             return 9
 
     @staticmethod
-    def data_limits_aoa(airframe: int) -> dict:
+    def data_limits_aoa(airframe_index: int) -> dict:
         """Gets airframe context based AoA limits
 
         Parameters
         ----------
-        airframe : int
+        airframe_index : int
             Airframe index
 
         Returns
@@ -49,7 +47,7 @@ class DataLimits:
         dict
             airframe based AoA limits
         """
-        if airframe == 1:  # F18
+        if airframe_index == 1:  # F18
             return {
                 AoA.slo_hi(): 9.8,
                 AoA.slo_med(): 9.3,
@@ -59,7 +57,7 @@ class DataLimits:
                 AoA.fast_med(): 6.9,
                 AoA.fast_hi(): 6.3,
             }
-        elif airframe == 2:  # F-14
+        elif airframe_index == 2:  # F-14
             return {
                 AoA.slo_hi(): Utils.units_to_deg(17),
                 AoA.slo_med(): Utils.units_to_deg(16),
@@ -69,7 +67,7 @@ class DataLimits:
                 AoA.fast_med(): Utils.units_to_deg(14),
                 AoA.fast_hi(): Utils.units_to_deg(13),
             }
-        elif airframe == 9:  # AV-8
+        elif airframe_index == 9:  # AV-8
             return {
                 AoA.slo_hi(): 16,
                 AoA.slo_med(): 13.5,
@@ -81,12 +79,12 @@ class DataLimits:
             }
 
     @staticmethod
-    def data_limits_gs(airframe: int) -> dict:
+    def data_limits_gs(airframe_index: int) -> dict:
         """Gets airframe context based GS limits
 
         Parameters
         ----------
-        airframe : int
+        airframe_index : int
             Airframe index
 
         Returns
@@ -95,7 +93,7 @@ class DataLimits:
             airframe based GS limits
         """
 
-        if airframe == 9:  # AV-8
+        if airframe_index == 9:  # AV-8
             return {
                 GS.___hi___(): 5.4,
                 GS.__hi__(): 4.9,
@@ -117,12 +115,12 @@ class DataLimits:
             }
 
     @staticmethod
-    def data_limits_gse(airframe: int) -> dict:
+    def data_limits_gse(airframe_index: int) -> dict:
         """Gets airframe context based GSE limits
 
         Parameters
         ----------
-        airframe : int
+        airframe_index : int
             Airframe index
 
         Returns
@@ -130,7 +128,7 @@ class DataLimits:
         dict
             airframe based GSE limits
         """
-        if airframe == 9:  # AV-8
+        if airframe_index == 9:  # AV-8
             return {
                 GS.___hi___(): 1.9,
                 GS.__hi__(): 1.4,
