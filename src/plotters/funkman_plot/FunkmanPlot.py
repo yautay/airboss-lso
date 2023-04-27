@@ -402,24 +402,23 @@ class Plot:
         ALT = np.array(trapsheet["Alt"]) * meter2feet  # Altitude in feet.
 
         # Get other info from result.
-        print(result.keys())
-        actype = get_val(result, "actype", "Unkown")
-        Tgroove = get_val(result, "Tgroove", "?", 1)
+        actype = result["actype"]
+        Tgroove = result["Tgroove"]
 
-        player = get_val(result, "player", "Ghostrider")
-        grade = get_val(result, "grade", "?")
-        points = get_val(result, "points", "?")
-        details = get_val(result, "details")
-        case = get_val(result, "case", "?")
-        wire = get_val(result, "wire", "?")
+        player = result["player"]
+        grade = result["grade"]
+        points = result["points"]
+        details = result["details"]
+        case = result["case"]
+        wire = result["wire"]
 
-        carriertype = get_val(result, "carriertype", "?")
-        carriername = get_val(result, "carriername", "?")
-        landingdist = get_val(result, "landingdist", -86)
-        windondeck = get_val(result, "windondeck", "?", 1)
-        missiontime = get_val(result, "missiontime", "?")
-        missiondate = get_val(result, "missiondate", "?")
-        theatre = get_val(result, "theatre", "Unknown Map")
+        carriertype = result["carriertype"]
+        carriername = result["carriername"]
+        landingdist = result["landingdist"]
+        windondeck = result["windondeck"]
+        missiontime = result["missiontime"]
+        missiondate = result["missiondate"]
+        theatre = result["theatre"]
 
         # Angled runway.
         theta = get_val(result, "carrierrwy", -9)

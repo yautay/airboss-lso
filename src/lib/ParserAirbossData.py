@@ -124,7 +124,7 @@ class ParserAirbossData:
             "windondeck": __get_val(result, "wind", "?", 1),
             "missiontime": __get_val(result, "mitime", "?"),
             "missiondate": __get_val(result, "midate", "?"),
-            "theatre": __get_val(result, "theatre", "Unknown Map")
+            "theatre": __get_val(result, "theatre", "Unknown theatre")
         }
         self.__airframe_index = DataLimits.airframe_context(self.__oth_data["actype"])
         self.__limits_aoa = DataLimits.data_limits_aoa(self.__airframe_index)
