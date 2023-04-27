@@ -3,6 +3,7 @@ FunkPlot
 
 This class uses matplotlib to create fancy images of trap sheets as well as bombing and strafing results.
 """
+import os.path
 
 import matplotlib.pyplot as plt
 from matplotlib.offsetbox import TextArea, AnnotationBbox
@@ -12,7 +13,7 @@ import numpy as np
 from datetime import datetime
 from enum import Enum
 from src.utils.utils import get_val
-from src.plot.assets.path import FUNKMAN_ASSETS_DIR
+from root import ROOT_DIR
 
 
 class PlotColor(Enum):
@@ -51,7 +52,8 @@ class AircraftType(Enum):
 
 class Plot:
     # /home/yautay/repo/FunkMan/assets/BombCircle.png
-    def __init__(self, ImagePath=FUNKMAN_ASSETS_DIR) -> None:
+    def __init__(self) -> None:
+        ImagePath = os.path.join(ROOT_DIR, "src", "plot", "assets")
         print(ImagePath)
         # Info message.
         print(f"Init FunkPlot: Reading images from {ImagePath}...")

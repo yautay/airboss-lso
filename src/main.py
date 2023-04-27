@@ -29,10 +29,10 @@ class Main:
         set_ini(self)
 
         # Create plot instance.
-        self.funkplot = Plot(self.image_path)
+        self.funkplot = Plot()
 
         # Create bot instance.
-        self.funkbot = Bot(token=self.token, channel_id=self.channel_id_main, image_path=self.image_path)
+        self.funkbot = Bot(token=self.token, channel_id=self.channel_id_main)
 
         # Create funksocket instance.
         self.funk_sock = Socket(Host=self.host, Port=self.port)
@@ -108,10 +108,3 @@ def set_ini(funkman: Main) -> None:
         funkman.host = section.get("HOST", "127.0.0.1")
     except:
         print("ERROR: [FUNKSOCK] section missing in ini file!")
-
-    # FUNKPLOT
-    try:
-        section = config["FUNKPLOT"]
-        funkman.image_path = section.get("IMAGEPATH", os.path.join(ROOT_DIR, "assets"))
-    except:
-        print("ERROR: [FUNKPLOT] section missing in ini file!")

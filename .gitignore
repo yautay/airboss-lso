@@ -1,3 +1,5 @@
-!FunkMan.ini
+__pycache__/
+*.pyc
+
 venv
 .idea
