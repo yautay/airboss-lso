@@ -68,15 +68,25 @@ class ParserAirbossData:
             except Exception as e:
                 print(f"{Colors.FAIL} e {Colors.ENDC}")
 
+        self.__raw_data = {
+            K.x(): result["trapsheet"][K.x()],
+            K.z(): result["trapsheet"][K.z()],
+            K.aoa(): result["trapsheet"][K.aoa()],
+            K.alt(): result["trapsheet"][K.alt()],
+            K.vy(): result["trapsheet"][K.vy()],
+            K.roll(): result["trapsheet"][K.roll()],
+            K.lue(): result["trapsheet"][K.lue()],
+            K.gse(): result["trapsheet"][K.gse()],
+        }
         self.__data = {
-            K.x(): -np.array(result["trapsheet"][K.x()]),
-            K.z(): np.array(result["trapsheet"][K.z()]),
-            K.aoa(): np.array(result["trapsheet"][K.aoa()]),
-            K.alt(): np.array(result["trapsheet"][K.alt()]),
-            K.vy(): np.array(result["trapsheet"][K.vy()]),
-            K.roll(): np.array(result["trapsheet"][K.roll()]),
-            K.lue(): -np.array(result["trapsheet"][K.lue()]),
-            K.gse(): np.array(result["trapsheet"][K.gse()]),
+            K.x(): -np.array(self.__raw_data[K.x()]),
+            K.z(): np.array(self.__raw_data[K.z()]),
+            K.aoa(): np.array(self.__raw_data[K.aoa()]),
+            K.alt(): np.array(self.__raw_data[K.alt()]),
+            K.vy(): np.array(self.__raw_data[K.vy()]),
+            K.roll(): np.array(self.__raw_data[K.roll()]),
+            K.lue(): -np.array(self.__raw_data[K.lue()]),
+            K.gse(): np.array(self.__raw_data[K.gse()]),
         }
 
         def __get_val(table: dict, key: str, nil: str or int = "", precision: int or None = None) -> str or int:
@@ -125,7 +135,7 @@ class ParserAirbossData:
     def dump_data_to_json(self):
         with open(os.path.join(ROOT_DIR, "tests", "results", "data", "json", "data_" + self.__dump_name),
                   "w") as data_dump:
-            data_dump.write(json.dumps(self.__data, indent=4))
+            data_dump.write(json.dumps(self.__raw_data, indent=4))
         with open(os.path.join(ROOT_DIR, "tests", "results", "data", "json", "data_oth" + self.__dump_name),
                   "w") as oth_data_dump:
             oth_data_dump.write(json.dumps(self.__oth_data, indent=4))

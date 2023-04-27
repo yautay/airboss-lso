@@ -51,6 +51,9 @@ class RawDataPlotter(object):
 
             ax.plot(x_raw, y_raw, linewidth=track_line_width, label="Track",
                     color=track_line_colour)
+
+            ax.plot(x, y, linewidth=2, label="Stripped",
+                    color="red")
             # print(Bcolors.OKBLUE + context + Bcolors.ENDC)
 
         dta = self.__data
@@ -99,9 +102,6 @@ class RawDataPlotter(object):
 
         fig, (ax_grv, ax_gs, ax_aoa, utils) = plt.subplots(4)
         fig.set_size_inches(12, 18)
-
-        # fig.text(0.5, 0.05, self.__filename, horizontalalignment='center', verticalalignment='center',
-        #          color='red')
 
         def plot_distance_marks(axe):
             axe.axvline(x=Utils.mile_quarts(1, mtrs=False, cbls=True), color='black', alpha=.15, linestyle='--',
@@ -397,99 +397,13 @@ class RawDataPlotter(object):
 
         plt.xlim(x_axis_limit_left, x_axis_limit_right)
 
-        # plt.show()
-
-        # print(self.__oth_data)
-
         title = str(f'Trapsheet of {self.__oth_data["player"]} [{self.__oth_data["actype"]}]')
         title += str(f'\n{self.__oth_data["grade"]} {self.__oth_data["points"]}PT - {self.__oth_data["details"]}')
 
         fig.suptitle(title, fontsize=12, color='black')
         fig.figure.figimage(plt.imread(assets.png_bckg_cag), 0, 0, alpha=1, zorder=-1, clip_on=True)
 
-        def overlay_squadron():
-            # Squadron
-            if "FA-18C" in self.__oth_data["actype"]:
-                fig.figure.figimage(plt.imread(assets.png_stamp_212), 0, 0, alpha=1, zorder=1,
-                                    clip_on=True)
-            elif "F-14" in self.__oth_data["actype"]:
-                fig.figure.figimage(plt.imread(assets.png_stamp_103), 0, 0, alpha=1, zorder=1,
-                                    clip_on=True)
-
-        def overlay_points():
-            # Points
-            if self.__oth_data["points"] == 0:
-                fig.figure.figimage(plt.imread(assets.png_0pts), 0, 0, alpha=1, zorder=2,
-                                    clip_on=True)
-            elif self.__oth_data["points"] == 1:
-                fig.figure.figimage(plt.imread(assets.png_1pts), 0, 0, alpha=1, zorder=2,
-                                    clip_on=True)
-            elif self.__oth_data["points"] == 2:
-                fig.figure.figimage(plt.imread(assets.png_2pts), 0, 0, alpha=1, zorder=2,
-                                    clip_on=True)
-            elif self.__oth_data["points"] == 2.5:
-                fig.figure.figimage(plt.imread(assets.png_25pts), 0, 0, alpha=1, zorder=2,
-                                    clip_on=True)
-            elif self.__oth_data["points"] == 3:
-                fig.figure.figimage(plt.imread(assets.png_3pts), 0, 0, alpha=1, zorder=2,
-                                    clip_on=True)
-            elif self.__oth_data["points"] == 4:
-                fig.figure.figimage(plt.imread(assets.png_4pts), 0, 0, alpha=1, zorder=2,
-                                    clip_on=True)
-            elif self.__oth_data["points"] == 5:
-                fig.figure.figimage(plt.imread(assets.png_5pts), 0, 0, alpha=1, zorder=2,
-                                    clip_on=True)
-
-        def overlay_stamps_and_comments():
-            # Stamps
-            if self.__oth_data["case"] == 3:
-                fig.figure.figimage(plt.imread(assets.png_stamp_nightpass), 0, 0, alpha=1, zorder=4,
-                                    clip_on=True)
-            if self.__oth_data["grade"] == "OK":
-                fig.figure.figimage(plt.imread(assets.png_stamp_perfect), 0, 0, alpha=1, zorder=4,
-                                    clip_on=True)
-                fig.figure.figimage(plt.imread(assets.png_comment_unicorn), 0, 0, alpha=1, zorder=4,
-                                    clip_on=True)
-            elif self.__oth_data["grade"] == "CUT":
-                fig.figure.figimage(plt.imread(assets.png_stamp_cut_pass), 0, 0, alpha=1, zorder=4,
-                                    clip_on=True)
-                fig.figure.figimage(plt.imread(assets.png_comment_cut_pass), 0, 0, alpha=1, zorder=4,
-                                    clip_on=True)
-            elif self.__oth_data["grade"] == "WO":
-                fig.figure.figimage(plt.imread(assets.png_stamp_wave_off), 0, 0, alpha=1, zorder=4,
-                                    clip_on=True)
-                fig.figure.figimage(plt.imread(assets.png_comment_wave_off), 0, 0, alpha=1, zorder=4,
-                                    clip_on=True)
-            elif self.__oth_data["grade"] == "NG":
-                fig.figure.figimage(plt.imread(assets.png_stamp_no_grade), 0, 0, alpha=1, zorder=4,
-                                    clip_on=True)
-                fig.figure.figimage(plt.imread(assets.png_comment_no_grade), 0, 0, alpha=1, zorder=4,
-                                    clip_on=True)
-            elif self.__oth_data["grade"] == "BLT":
-                fig.figure.figimage(plt.imread(assets.png_stamp_bolter), 0, 0, alpha=1, zorder=4,
-                                    clip_on=True)
-                fig.figure.figimage(plt.imread(assets.png_comment_bolter), 0, 0, alpha=1, zorder=4,
-                                    clip_on=True)
-            elif self.__oth_data["grade"] == "FAIR":
-                fig.figure.figimage(plt.imread(assets.png_stamp_fair), 0, 0, alpha=1, zorder=4,
-                                    clip_on=True)
-                fig.figure.figimage(plt.imread(assets.png_comment_fair), 0, 0, alpha=1, zorder=4,
-                                    clip_on=True)
-            else:
-                fig.figure.figimage(plt.imread(assets.png_stamp_error), 0, 0, alpha=.3, zorder=4,
-                                    clip_on=True)
-
-        # overlay_squadron()
-        # overlay_points()
-        # overlay_stamps_and_comments()
-
-        # fig.figure.figimage(plt.imread("/home/yautay/repo/dcs-bot/assets/testpic.png"), 0, 0, alpha=0.2, zorder=-1,
-        #                     clip_on=True)
-        # plt.annotate("TEST anotacja", xy=(.51, .51), xycoords='figure fraction', alpha=1, color="red",
-        #
-        #              horizontalalignment='left', verticalalignment="bottom")
         if file_name:
-            fig.savefig(file_name)
             fig.savefig(file_name + "-alpha", transparent=True)
 
         return fig

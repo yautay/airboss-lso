@@ -20,6 +20,6 @@ for filename in os.listdir(os.path.join(ROOT_DIR, "tests", "dumps")):
             print(f"{Colors.FAIL} e {file_path} {Colors.ENDC}")
         parser_airboss_dump = ParserAirbossData()
         parser_airboss_dump.init_data(results)
+        parser_airboss_dump.dump_data_to_json()
         plotter = RawDataPlotter(parser_airboss_dump)
         plotter.plot_case(plot_path)
-
