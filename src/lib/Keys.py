@@ -2,9 +2,29 @@ from enum import Enum
 
 
 class KeysAirframes(Enum):
-    F18 = "FA-18C_hornet"
-    F14A = "F-14A-135-GR"
-    AV8 = "AV-8B"
+    AV8B = "AV8BNA",
+    HORNET = "FA-18C_hornet",
+    A4EC = "A-4E-C",
+    F14A = "F-14A-135-GR",
+    F14B = "F-14B",
+    T45C = "T-45",
+
+
+class KeysCarriers(Enum):
+    ROOSEVELT = "CVN_71",
+    LINCOLN = "CVN_72",
+    WASHINGTON = "CVN_73",
+    TRUMAN = "CVN_75",
+    STENNIS = "Stennis",
+    FORRESTAL = "Forrestal",
+    VINSON = "VINSON",
+    HERMES = "HERMES81",
+    INVINCIBLE = "hms_invincible",
+    TARAWA = "LHA_Tarawa",
+    AMERICA = "USS America LHA-6",
+    JCARLOS = "L61",
+    CANBERRA = "L02",
+    KUZNETSOV = "KUZNECOW"
 
 
 class KeysAoA(Enum):
@@ -68,3 +88,18 @@ class KeysTrapfile(Enum):
     TRAPSHEET = "trapsheet"
     WIND = "wind"
     WIRE = "wire"
+
+
+class KeysCarrierfile(Enum):
+    STERNDIST = "sterndist"
+    DECKHEIGHT = "deckheight"
+    TOTLENGTH = "totlength"
+    TOTWIDTHPORT = "totwidthport"
+    TOTWIDTHSTARBOARD = "totwidthstarboard"
+    RWYANGLE = "rwyangle"
+    RWYLENGTH = "rwylength"
+    RWYWIDTH = "rwywidth"
+    WIRE_1 = "wire1"
+    WIRE_2 = "wire2"
+    WIRE_3 = "wire3"
+    WIRE_4 = "wire4"
