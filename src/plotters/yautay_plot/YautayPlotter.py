@@ -279,8 +279,8 @@ class YautayPlotter(object):
 
         def plotter_aoa():
             # AoA
-            aoa_y_axis_limit_low = self.__limits_aoa[AoA.fast_hi()] - .5
-            aoa_y_axis_limit_hi = self.__limits_aoa[AoA.slo_hi()] + .5
+            aoa_y_axis_limit_low = self.__limits_aoa[AoA.FAST_HI] - .5
+            aoa_y_axis_limit_hi = self.__limits_aoa[AoA.SLO_HI] + .5
             ax_aoa.set_ylim(aoa_y_axis_limit_low, aoa_y_axis_limit_hi)
             ax_aoa.set_xlim(x_axis_limit_right, x_axis_limit_left)
             ax_aoa.set_ylabel('AoA [deg]')
