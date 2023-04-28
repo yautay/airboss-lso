@@ -388,10 +388,10 @@ class YautayPlotter(object):
         title += str(f'\n{self.__oth_data[KO.GRADE]} {self.__oth_data[KO.POINTS]}PT - {self.__oth_data[KO.DETAILS]}')
 
         fig.suptitle(title, fontsize=12, color='black')
-        fig.figure.figimage(plt.imread(assets.png_bckg_cag), 0, 0, alpha=1, zorder=-1, clip_on=True)
+        # fig.figure.figimage(plt.imread(assets.png_bckg_cag), 0, 0, alpha=1, zorder=-1, clip_on=True)
+        fig.figure.figimage(plt.imread(assets.png_bckg_clean), 0, 0, alpha=1, zorder=-1, clip_on=True)
 
         def overlay_squadron(taw: bool = False):
-            print(self.__oth_data[KO.AIRFRAME])
             if taw:
             # Squadron
                 if self.__oth_data[KO.AIRFRAME] in [AIRFRAME.HORNET.value[0]]:
@@ -402,13 +402,13 @@ class YautayPlotter(object):
                                         clip_on=True)
             else:
                 if self.__oth_data[KO.AIRFRAME] in [AIRFRAME.HORNET.value[0]]:
-                    fig.figure.figimage(plt.imread(assets.png_logo_hornet), 50, 1000, alpha=1, zorder=1,
+                    fig.figure.figimage(plt.imread(assets.png_logo_hornet), 100, 1580, alpha=1, zorder=1,
                                         clip_on=True)
                 elif self.__oth_data[KO.AIRFRAME] in [AIRFRAME.F14B.value[0], AIRFRAME.F14A.value[0]]:
-                    fig.figure.figimage(plt.imread(assets.png_logo_tomcat), 0, 0, alpha=1, zorder=1,
+                    fig.figure.figimage(plt.imread(assets.png_logo_tomcat), 100, 1600, alpha=1, zorder=1,
                                         clip_on=True)
                 elif self.__oth_data[KO.AIRFRAME] in [AIRFRAME.AV8B.value[0]]:
-                    fig.figure.figimage(plt.imread(assets.png_logo_harrier), 0, 0, alpha=1, zorder=1,
+                    fig.figure.figimage(plt.imread(assets.png_logo_harrier), 100, 1580, alpha=1, zorder=1,
                                         clip_on=True)
 
         def overlay_points():
@@ -475,8 +475,8 @@ class YautayPlotter(object):
                                     clip_on=True)
 
         overlay_squadron()
-        overlay_points()
-        overlay_stamps_and_comments()
+        # overlay_points()
+        # overlay_stamps_and_comments()
 
         # fig.figure.figimage(plt.imread("/home/yautay/repo/dcs-bot/assets/testpic.png"), 0, 0, alpha=0.2, zorder=-1,
         #                     clip_on=True)
