@@ -1,6 +1,12 @@
 import os
 
 ASSETS_DIR = os.path.dirname(os.path.abspath(__file__))
+
+#logos
+png_logo_harrier = os.path.join(ASSETS_DIR, "Harrier.png")
+png_logo_tomcat = os.path.join(ASSETS_DIR, "Tomcat.png")
+png_logo_hornet = os.path.join(ASSETS_DIR, "Hornet.png")
+
 # pts
 png_0pts = os.path.join(ASSETS_DIR, "pts_0.png")
 png_1pts = os.path.join(ASSETS_DIR, "pts_1.png")

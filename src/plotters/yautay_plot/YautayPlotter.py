@@ -4,6 +4,7 @@ from matplotlib import pyplot as plt
 from scipy.interpolate import interp1d
 from src.lib.Keys import KeysTrapsheet as K, KeysGRV as GRV, KeysGS as GS, KeysAoA as AoA
 from src.lib.Keys import KeysTrapfile as KO
+from src.lib.Keys import KeysAirframes as AIRFRAME
 from src.lib.Utils import Utils
 from src.plotters.yautay_plot.assets import assets
 from src.lib.ParserAirbossData import ParserAirbossData, DownwindStripper
@@ -389,14 +390,26 @@ class YautayPlotter(object):
         fig.suptitle(title, fontsize=12, color='black')
         fig.figure.figimage(plt.imread(assets.png_bckg_cag), 0, 0, alpha=1, zorder=-1, clip_on=True)
 
-        def overlay_squadron():
+        def overlay_squadron(taw: bool = False):
+            print(self.__oth_data[KO.AIRFRAME])
+            if taw:
             # Squadron
-            if "FA-18C" in self.__oth_data[KO.AIRFRAME]:
-                fig.figure.figimage(plt.imread(assets.png_stamp_212), 0, 0, alpha=1, zorder=1,
-                                    clip_on=True)
-            elif "F-14" in self.__oth_data[KO.AIRFRAME]:
-                fig.figure.figimage(plt.imread(assets.png_stamp_103), 0, 0, alpha=1, zorder=1,
-                                    clip_on=True)
+                if self.__oth_data[KO.AIRFRAME] in [AIRFRAME.HORNET.value[0]]:
+                    fig.figure.figimage(plt.imread(assets.png_stamp_212), 0, 0, alpha=1, zorder=1,
+                                        clip_on=True)
+                elif self.__oth_data[KO.AIRFRAME] in [AIRFRAME.F14B.value[0], AIRFRAME.F14A.value[0]]:
+                    fig.figure.figimage(plt.imread(assets.png_stamp_103), 0, 0, alpha=1, zorder=1,
+                                        clip_on=True)
+            else:
+                if self.__oth_data[KO.AIRFRAME] in [AIRFRAME.HORNET.value[0]]:
+                    fig.figure.figimage(plt.imread(assets.png_logo_hornet), 50, 1000, alpha=1, zorder=1,
+                                        clip_on=True)
+                elif self.__oth_data[KO.AIRFRAME] in [AIRFRAME.F14B.value[0], AIRFRAME.F14A.value[0]]:
+                    fig.figure.figimage(plt.imread(assets.png_logo_tomcat), 0, 0, alpha=1, zorder=1,
+                                        clip_on=True)
+                elif self.__oth_data[KO.AIRFRAME] in [AIRFRAME.AV8B.value[0]]:
+                    fig.figure.figimage(plt.imread(assets.png_logo_harrier), 0, 0, alpha=1, zorder=1,
+                                        clip_on=True)
 
         def overlay_points():
             # Points

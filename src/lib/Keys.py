@@ -104,3 +104,16 @@ class KeysCarrierfile(Enum):
     WIRE_2 = "wire2"
     WIRE_3 = "wire3"
     WIRE_4 = "wire4"
+
+
+class KeysGrades(Enum):
+    PERFECT_OK = "_OK_"
+    OK = "OK"
+    FAIR_OK = "(OK)"
+    NG = "--"
+    WO = "WO"
+    WOP = "WOP"
+    CUT = "CUT"
+    WOFD = "WOFD"
+    OWO = "OWO"
+    BOLT = "-- (BOLTER)"
