@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 from matplotlib.offsetbox import TextArea, AnnotationBbox
 from root import ROOT_DIR
 from src.lib.Utils import Utils
+from src.lib.Keys import KeysTrapsheet as K, KeysTrapfile as KO
 
 get_val = Utils.get_val
 
@@ -396,32 +397,32 @@ class Plot:
         feet2meter = 0.3048
 
         # Get arrays.
-        X = np.array(trapsheet["X"])  # X in meters.
-        Y = np.array(trapsheet["Z"])  # Y in meters.
-        AOA = np.array(trapsheet["AoA"])  # Angle of attack in AU.
-        ALT = np.array(trapsheet["Alt"]) * meter2feet  # Altitude in feet.
+        X = np.array(trapsheet[K.X])  # X in meters.
+        Y = np.array(trapsheet[K.Z])  # Y in meters.
+        AOA = np.array(trapsheet[K.AOA])  # Angle of attack in AU.
+        ALT = np.array(trapsheet[K.ALT]) * meter2feet  # Altitude in feet.
 
         # Get other info from result.
-        actype = result["actype"]
-        Tgroove = result["Tgroove"]
+        actype = result[KO.AIRFRAME]
+        Tgroove = result[KO.TGROOVE]
 
-        player = result["player"]
-        grade = result["grade"]
-        points = result["points"]
-        details = result["details"]
-        case = result["case"]
-        wire = result["wire"]
+        player = result[KO.NAME]
+        grade = result[KO.GRADE]
+        points = result[KO.POINTS]
+        details = result[KO.DETAILS]
+        case = result[KO.CASE]
+        wire = result[KO.WIRE]
 
-        carriertype = result["carriertype"]
-        carriername = result["carriername"]
-        landingdist = result["landingdist"]
-        windondeck = result["windondeck"]
-        missiontime = result["missiontime"]
-        missiondate = result["missiondate"]
-        theatre = result["theatre"]
+        carriertype = result[KO.CARRIERTYPE]
+        carriername = result[KO.CARRIERNAME]
+        landingdist = result[KO.LANDINGDIST]
+        windondeck = result[KO.WIND]
+        missiontime = result[KO.MITIME]
+        missiondate = result[KO.MIDATE]
+        theatre = result[KO.THEATRE]
 
         # Angled runway.
-        theta = get_val(result, "carrierrwy", -9)
+        theta = get_val(result, KO.CARRIERRWY, -9)
 
         if abs(theta) > 0.1:
             angledRunway = True

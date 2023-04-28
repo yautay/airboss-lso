@@ -146,10 +146,12 @@ class ParserAirbossData:
                 result_dict[k_new] = v_new
             return result_dict
 
-        with open(self.__dump_name, "w") as data_dump:
-            data_dump.write(json.dumps(convert_enum_to_str(self.raw_data), indent=4))
+        raw_data = convert_enum_to_str(self.raw_data)
+        oth_data = convert_enum_to_str(self.oth_data)
+        oth_data[KO.TRAPSHEET.value] = raw_data
+
         with open(self.__dump_name, "w") as oth_data_dump:
-            oth_data_dump.write(json.dumps(convert_enum_to_str(self.oth_data), indent=4))
+            oth_data_dump.write(json.dumps(oth_data, indent=4))
 
 
 class DownwindStripper:

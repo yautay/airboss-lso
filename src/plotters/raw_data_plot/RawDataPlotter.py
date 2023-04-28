@@ -3,6 +3,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 from src.lib.ParserAirbossData import DownwindStripper
 from src.lib.Keys import KeysTrapsheet as K, KeysGRV as GRV, KeysGS as GS, KeysAoA as AoA
+from src.lib.Keys import KeysTrapfile as KO
 from src.lib.Utils import Utils
 from src.plotters.yautay_plot.assets import assets
 from src.lib.ParserAirbossData import ParserAirbossData
@@ -378,8 +379,8 @@ class RawDataPlotter(object):
 
         plt.xlim(x_axis_limit_left, x_axis_limit_right)
 
-        title = str(f'Trapsheet of {self.__oth_data["player"]} [{self.__oth_data["actype"]}]')
-        title += str(f'\n{self.__oth_data["grade"]} {self.__oth_data["points"]}PT - {self.__oth_data["details"]}')
+        title = str(f'Trapsheet of {self.__oth_data[KO.NAME]} [{self.__oth_data[KO.AIRFRAME]}]')
+        title += str(f'\n{self.__oth_data[KO.GRADE]} {self.__oth_data[KO.POINTS]}PT - {self.__oth_data[KO.DETAILS]}')
 
         fig.suptitle(title, fontsize=12, color='black')
         fig.figure.figimage(plt.imread(assets.png_bckg_cag), 0, 0, alpha=1, zorder=-1, clip_on=True)
