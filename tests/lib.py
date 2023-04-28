@@ -1,5 +1,4 @@
 def get_result_trap(trapfile: str or dict) -> dict:
-    print(trapfile)
     trapsheet = trapfile["trapsheet"]
     # grade
     try:

@@ -88,6 +88,7 @@ class KeysTrapfile(Enum):
     TRAPSHEET = "trapsheet"
     WIND = "wind"
     WIRE = "wire"
+    CARRIERDATA = "carrierdata"
 
 
 class KeysCarrierfile(Enum):

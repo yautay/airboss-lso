@@ -8,7 +8,7 @@ import numpy as np
 
 from root import ROOT_DIR
 from src.lib.Bcolors import Bcolors as Colors
-from src.lib.DataLimits import DataLimits
+from src.lib.DataLimits import DataLimits, CarriersData
 from src.lib.Keys import \
     KeysTrapsheet as K,\
     KeysTrapfile as KO
@@ -29,6 +29,7 @@ class ParserAirbossData:
         self.__limits_lue = dict
         self.__limits_gs = dict
         self.__limits_gse = dict
+        self.__carrier_data = dict
         self.__dump_name = str
         self.dump_data = dump_data
 
@@ -43,6 +44,10 @@ class ParserAirbossData:
     @property
     def raw_data(self) -> Type[dict]:
         return self.__raw_data
+
+    @property
+    def carrier_data(self) -> Type[dict]:
+        return self.__carrier_data
 
     @property
     def airframe_index(self) -> Type[int]:
@@ -105,7 +110,6 @@ class ParserAirbossData:
             K.LUE: -np.array(self.__raw_data[K.LUE]),
             K.GSE: np.array(self.__raw_data[K.GSE]),
         }
-
         self.__oth_data = {
             KO.AIRFRAME: get_val(result, KO.AIRFRAME.value),
             KO.TGROOVE: get_val(result, KO.TGROOVE.value, precision=1),
@@ -125,11 +129,13 @@ class ParserAirbossData:
             KO.MIDATE: get_val(result, KO.MIDATE.value),
             KO.THEATRE: get_val(result, KO.THEATRE.value)
         }
+        self.__carrier_data = CarriersData.carriers_data(CarriersData.carrier_context(self.__oth_data[KO.CARRIERTYPE]))
         self.__airframe_index = DataLimits.airframe_context(self.__oth_data[KO.AIRFRAME])
         self.__limits_aoa = DataLimits.data_limits_aoa(self.__airframe_index)
         self.__limits_lu = DataLimits.data_limits_lu()
         self.__limits_gs = DataLimits.data_limits_gs(self.__airframe_index)
         self.__limits_gse = DataLimits.data_limits_gse(self.__airframe_index)
+        self.__oth_data[KO.CARRIERDATA] = self.__carrier_data
 
     def dump_data_to_json(self):
         def convert_enum_to_str(input_dict: Type[dict]) -> dict:
@@ -141,6 +147,8 @@ class ParserAirbossData:
                     k_new = k
                 if isinstance(v, Enum):
                     v_new = v.value
+                elif isinstance(v, dict):
+                    v_new = convert_enum_to_str(v)
                 else:
                     v_new = v
                 result_dict[k_new] = v_new

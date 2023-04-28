@@ -96,7 +96,7 @@ class DataLimits:
             }
 
     @staticmethod
-    def data_limits_gs(airframe_index: int) -> dict:
+    def data_limits_gs(airframe_index: Enum) -> dict:
         """Gets airframe context based GS limits
 
         Parameters
@@ -132,7 +132,7 @@ class DataLimits:
             }
 
     @staticmethod
-    def data_limits_gse(airframe_index: int) -> dict:
+    def data_limits_gse(airframe_index: Enum) -> dict:
         """Gets airframe context based GSE limits
 
         Parameters
