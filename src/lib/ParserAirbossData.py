@@ -7,6 +7,10 @@ from root import ROOT_DIR
 from src.lib.Bcolors import Bcolors as Colors
 from src.lib.DataLimits import DataLimits
 from src.lib.Keys import KeysCSV as K
+from src.lib.Utils import Utils
+
+
+get_val = Utils.get_val
 
 
 class ParserAirbossData:
@@ -92,39 +96,24 @@ class ParserAirbossData:
             K.gse(): np.array(self.__raw_data[K.gse()]),
         }
 
-        def __get_val(table: dict, key: str, nil: str or int = "", precision: int or None = None) -> str or int:
-            if key in table.keys():
-                value = table[key]
-                if value == "false":
-                    return False
-                elif value == "true":
-                    return True
-                else:
-                    if precision:
-                        return str(round(value, precision))
-                    else:
-                        return value
-            else:
-                return nil
-
         self.__oth_data = {
-            "actype": __get_val(result, "airframe", "Unkown"),
-            "Tgroove": __get_val(result, "Tgroove", "?", 1),
+            "actype": get_val(result, "airframe", "Unkown"),
+            "Tgroove": get_val(result, "Tgroove", "?", 1),
 
-            "player": __get_val(result, "name", "Ghostrider"),
-            "grade": __get_val(result, "grade", "?"),
-            "points": __get_val(result, "points", "?"),
-            "details": __get_val(result, "details"),
-            "case": __get_val(result, "case", "?"),
-            "wire": __get_val(result, "wire", "?"),
+            "player": get_val(result, "name", "Ghostrider"),
+            "grade": get_val(result, "grade", "?"),
+            "points": get_val(result, "points", "?"),
+            "details": get_val(result, "details"),
+            "case": get_val(result, "case", "?"),
+            "wire": get_val(result, "wire", "?"),
 
-            "carriertype": __get_val(result, "carriertype", "?"),
-            "carriername": __get_val(result, "carriername", "?"),
-            "landingdist": __get_val(result, "landingdist", -86),
-            "windondeck": __get_val(result, "wind", "?", 1),
-            "missiontime": __get_val(result, "mitime", "?"),
-            "missiondate": __get_val(result, "midate", "?"),
-            "theatre": __get_val(result, "theatre", "Unknown theatre")
+            "carriertype": get_val(result, "carriertype", "?"),
+            "carriername": get_val(result, "carriername", "?"),
+            "landingdist": get_val(result, "landingdist", -86),
+            "windondeck": get_val(result, "wind", "?", 1),
+            "missiontime": get_val(result, "mitime", "?"),
+            "missiondate": get_val(result, "midate", "?"),
+            "theatre": get_val(result, "theatre", "Unknown theatre")
         }
         self.__airframe_index = DataLimits.airframe_context(self.__oth_data["actype"])
         self.__limits_aoa = DataLimits.data_limits_aoa(self.__airframe_index)

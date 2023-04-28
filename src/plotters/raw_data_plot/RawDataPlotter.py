@@ -45,36 +45,36 @@ class RawDataPlotter(object):
         limits_x_axis = np.linspace(x_axis_limit_right, x_axis_limit_left, x_axis_limit_left)
 
         # AoA Limits
-        aoa_slo_hi_limit = self.__limits_aoa[AoA.slo_hi()]
-        aoa_slo_med_limit = self.__limits_aoa[AoA.slo_med()]
-        aoa_slo_lo_limit = self.__limits_aoa[AoA.slo_lo()]
-        aoa_fst_lo_limit = self.__limits_aoa[AoA.fast_lo()]
-        aoa_fst_med_limit = self.__limits_aoa[AoA.fast_med()]
-        aoa_fst_hi_limit = self.__limits_aoa[AoA.fast_hi()]
+        aoa_slo_hi_limit = self.__limits_aoa[AoA.SLO_HI]
+        aoa_slo_med_limit = self.__limits_aoa[AoA.SLO_MED]
+        aoa_slo_lo_limit = self.__limits_aoa[AoA.SLO_LO]
+        aoa_fst_lo_limit = self.__limits_aoa[AoA.FAST_LO]
+        aoa_fst_med_limit = self.__limits_aoa[AoA.FAST_MED]
+        aoa_fst_hi_limit = self.__limits_aoa[AoA.FAST_HI]
 
         # LU Limits
-        lu___lul___limit = self.__limits_lu[GRV.___lul___()]
-        lu__lul__limit = self.__limits_lu[GRV.__lul__()]
-        lu_lul_limit = self.__limits_lu[GRV.lul()]
-        lu_lur_limit = self.__limits_lu[GRV.lur()]
-        lu__lur__limit = self.__limits_lu[GRV.__lur__()]
-        lu___lur___limit = self.__limits_lu[GRV.___lur___()]
+        lu___lul___limit = self.__limits_lu[GRV.___LUL___]
+        lu__lul__limit = self.__limits_lu[GRV.__LUL__]
+        lu_lul_limit = self.__limits_lu[GRV.LUL]
+        lu_lur_limit = self.__limits_lu[GRV.LUR]
+        lu__lur__limit = self.__limits_lu[GRV.__LUR__]
+        lu___lur___limit = self.__limits_lu[GRV.___LUR___]
 
         # GS Limits
-        gs___hi___limit = self.__limits_gs[GS.___hi___()]
-        gs__hi__limit = self.__limits_gs[GS.__hi__()]
-        gs_hi_limit = self.__limits_gs[GS.hi()]
-        gs_lo_limit = self.__limits_gs[GS.lo()]
-        gs__lo__limit = self.__limits_gs[GS.__lo__()]
-        gs___lo___limit = self.__limits_gs[GS.___lo___()]
+        gs___hi___limit = self.__limits_gs[GS.___HI___]
+        gs__hi__limit = self.__limits_gs[GS.__HI__]
+        gs_hi_limit = self.__limits_gs[GS.HI]
+        gs_lo_limit = self.__limits_gs[GS.LO]
+        gs__lo__limit = self.__limits_gs[GS.__LO__]
+        gs___lo___limit = self.__limits_gs[GS.___LO___]
 
         # GSE Limits
-        gse___hi___limit = self.__limits_gse[GS.___hi___()]
-        gse__hi__limit = self.__limits_gse[GS.__hi__()]
-        gse_hi_limit = self.__limits_gse[GS.hi()]
-        gse_lo_limit = self.__limits_gse[GS.lo()]
-        gse__lo__limit = self.__limits_gse[GS.__lo__()]
-        gse___lo___limit = self.__limits_gse[GS.___lo___()]
+        gse___hi___limit = self.__limits_gse[GS.___HI___]
+        gse__hi__limit = self.__limits_gse[GS.__HI__]
+        gse_hi_limit = self.__limits_gse[GS.HI]
+        gse_lo_limit = self.__limits_gse[GS.LO]
+        gse__lo__limit = self.__limits_gse[GS.__LO__]
+        gse___lo___limit = self.__limits_gse[GS.___LO___]
 
         line_alpha = .3
         fill_alpha = .05
@@ -279,8 +279,8 @@ class RawDataPlotter(object):
 
         def plotter_aoa():
             # AoA
-            aoa_y_axis_limit_low = self.__limits_aoa[AoA.fast_hi()] - .5
-            aoa_y_axis_limit_hi = self.__limits_aoa[AoA.slo_hi()] + .5
+            aoa_y_axis_limit_low = self.__limits_aoa[AoA.FAST_HI] - .5
+            aoa_y_axis_limit_hi = self.__limits_aoa[AoA.SLO_HI] + .5
             ax_aoa.set_ylim(aoa_y_axis_limit_low, aoa_y_axis_limit_hi)
             ax_aoa.set_xlim(x_axis_limit_right, x_axis_limit_left)
             ax_aoa.set_ylabel('AoA [deg]')

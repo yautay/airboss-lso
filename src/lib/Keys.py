@@ -1,7 +1,4 @@
-class Common:
-    @staticmethod
-    def limits():
-        return "limits"
+from enum import Enum
 
 
 class KeysAirframes:
@@ -22,94 +19,34 @@ class KeysAirframes:
         return "AV-8B"
 
 
-class KeysAoA(Common):
-    @staticmethod
-    def slo_hi():
-        return "aoa___slo___limit"
-
-    @staticmethod
-    def slo_med():
-        return "aoa__slo__limit"
-
-    @staticmethod
-    def slo_lo():
-        return "aoa_slo_limit"
-
-    @staticmethod
-    def ok():
-        return "aoa_ok"
-
-    @staticmethod
-    def fast_lo():
-        return "aoa_fst_limit"
-
-    @staticmethod
-    def fast_med():
-        return "aoa__fst__limit"
-
-    @staticmethod
-    def fast_hi():
-        return "aoa___fst___limit"
+class KeysAoA(Enum):
+    SLO_HI = "aoa___slo___limit"
+    SLO_MED = "aoa__slo__limit"
+    SLO_LO = "aoa_slo_limit"
+    OK = "aoa_ok"
+    FAST_LO = "aoa_fst_limit"
+    FAST_MED = "aoa__fst__limit"
+    FAST_HI = "aoa___fst___limit"
 
 
-class KeysGS(Common):
-    @staticmethod
-    def ___hi___():
-        return "gs___hi___limit"
-
-    @staticmethod
-    def __hi__():
-        return "gs__hi__limit"
-
-    @staticmethod
-    def hi():
-        return "gs_hi_limit"
-
-    @staticmethod
-    def gs():
-        return "gs_ok"
-
-    @staticmethod
-    def lo():
-        return "gs_lo_limit"
-
-    @staticmethod
-    def __lo__():
-        return "gs__lo__limit"
-
-    @staticmethod
-    def ___lo___():
-        return "gs___lo___limit"
+class KeysGS(Enum):
+    ___HI___ = "gs___hi___limit"
+    __HI__ = "gs__hi__limit"
+    HI = "gs_hi_limit"
+    GS = "gs_ok"
+    LO = "gs_lo_limit"
+    __LO__ = "gs__lo__limit"
+    ___LO___ = "gs___lo___limit"
 
 
-class KeysGRV(Common):
-    @staticmethod
-    def ___lul___():
-        return "grv___lul___limit"
-
-    @staticmethod
-    def __lul__():
-        return "grv__lul__limit"
-
-    @staticmethod
-    def lul():
-        return "grv_lul_limit"
-
-    @staticmethod
-    def ok():
-        return "grv_ok"
-
-    @staticmethod
-    def lur():
-        return "grv_lur_limit"
-
-    @staticmethod
-    def __lur__():
-        return "grv__lur__limit"
-
-    @staticmethod
-    def ___lur___():
-        return "grv___lur___limit"
+class KeysGRV(Enum):
+    ___LUL___ = "grv___lul___limit"
+    __LUL__ = "grv__lul__limit"
+    LUL = "grv_lul_limit"
+    OK = "grv_ok"
+    LUR = "grv_lur_limit"
+    __LUR__ = "grv__lur__limit"
+    ___LUR___ = "grv___lur___limit"
 
 
 class KeysCSV:
@@ -184,4 +121,3 @@ class KeysCSV:
     @staticmethod
     def details():
         return "Details"
-

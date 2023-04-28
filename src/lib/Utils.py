@@ -53,9 +53,6 @@ class Utils:
 
     @staticmethod
     def get_val(table: dict, key: str, nil: str = "", precision: int or None = None) -> bool or int or str:
-        """
-        Get table value.
-        """
         if key in table.keys():
             value = table[key]
             if value == "false":
