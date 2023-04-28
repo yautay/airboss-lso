@@ -1,12 +1,17 @@
 import datetime
 import json
 import os.path
+from enum import Enum
+from typing import Type
+
 import numpy as np
 
 from root import ROOT_DIR
 from src.lib.Bcolors import Bcolors as Colors
 from src.lib.DataLimits import DataLimits
-from src.lib.Keys import KeysCSV as K
+from src.lib.Keys import \
+    KeysTrapsheet as K,\
+    KeysTrapfile as KO
 from src.lib.Utils import Utils
 
 
@@ -15,6 +20,7 @@ get_val = Utils.get_val
 
 class ParserAirbossData:
     def __init__(self, dump_data: bool = False):
+        self.__raw_data = dict
         self.__data = dict
         self.__oth_data = dict
         self.__airframe_index = int
@@ -27,35 +33,39 @@ class ParserAirbossData:
         self.dump_data = dump_data
 
     @property
-    def data(self):
+    def data(self) -> Type[dict]:
         return self.__data
 
     @property
-    def oth_data(self):
+    def oth_data(self) -> Type[dict]:
         return self.__oth_data
 
     @property
-    def airframe_index(self):
+    def raw_data(self) -> Type[dict]:
+        return self.__raw_data
+
+    @property
+    def airframe_index(self) -> Type[int]:
         return self.__airframe_index
 
     @property
-    def limits_aoa(self):
+    def limits_aoa(self) -> Type[dict]:
         return self.__limits_aoa
 
     @property
-    def limits_lu(self):
+    def limits_lu(self) -> Type[dict]:
         return self.__limits_lu
 
     @property
-    def limits_lue(self):
+    def limits_lue(self) -> Type[dict]:
         return self.__limits_lue
 
     @property
-    def limits_gs(self):
+    def limits_gs(self) -> Type[dict]:
         return self.__limits_gs
 
     @property
-    def limits_gse(self):
+    def limits_gse(self) -> Type[dict]:
         return self.__limits_gse
 
     def init_data(self, result: dict, filename: str or None = None):
@@ -76,56 +86,70 @@ class ParserAirbossData:
                 print(f"{Colors.FAIL} e {Colors.ENDC}")
 
         self.__raw_data = {
-            K.x(): result["trapsheet"][K.x()],
-            K.z(): result["trapsheet"][K.z()],
-            K.aoa(): result["trapsheet"][K.aoa()],
-            K.alt(): result["trapsheet"][K.alt()],
-            K.vy(): result["trapsheet"][K.vy()],
-            K.roll(): result["trapsheet"][K.roll()],
-            K.lue(): result["trapsheet"][K.lue()],
-            K.gse(): result["trapsheet"][K.gse()],
+            K.X: result[KO.TRAPSHEET.value][K.X.value],
+            K.Z: result[KO.TRAPSHEET.value][K.Z.value],
+            K.AOA: result[KO.TRAPSHEET.value][K.AOA.value],
+            K.ALT: result[KO.TRAPSHEET.value][K.ALT.value],
+            K.VY: result[KO.TRAPSHEET.value][K.VY.value],
+            K.ROLL: result[KO.TRAPSHEET.value][K.ROLL.value],
+            K.LUE: result[KO.TRAPSHEET.value][K.LUE.value],
+            K.GSE: result[KO.TRAPSHEET.value][K.GSE.value],
         }
         self.__data = {
-            K.x(): -np.array(self.__raw_data[K.x()]),
-            K.z(): np.array(self.__raw_data[K.z()]),
-            K.aoa(): np.array(self.__raw_data[K.aoa()]),
-            K.alt(): np.array(self.__raw_data[K.alt()]),
-            K.vy(): np.array(self.__raw_data[K.vy()]),
-            K.roll(): np.array(self.__raw_data[K.roll()]),
-            K.lue(): -np.array(self.__raw_data[K.lue()]),
-            K.gse(): np.array(self.__raw_data[K.gse()]),
+            K.X: -np.array(self.__raw_data[K.X]),
+            K.Z: np.array(self.__raw_data[K.Z]),
+            K.AOA: np.array(self.__raw_data[K.AOA]),
+            K.ALT: np.array(self.__raw_data[K.ALT]),
+            K.VY: np.array(self.__raw_data[K.VY]),
+            K.ROLL: np.array(self.__raw_data[K.ROLL]),
+            K.LUE: -np.array(self.__raw_data[K.LUE]),
+            K.GSE: np.array(self.__raw_data[K.GSE]),
         }
 
         self.__oth_data = {
-            "actype": get_val(result, "airframe", "Unkown"),
-            "Tgroove": get_val(result, "Tgroove", "?", 1),
+            KO.AIRFRAME: get_val(result, KO.AIRFRAME.value),
+            KO.TGROOVE: get_val(result, KO.TGROOVE.value, precision=1),
 
-            "player": get_val(result, "name", "Ghostrider"),
-            "grade": get_val(result, "grade", "?"),
-            "points": get_val(result, "points", "?"),
-            "details": get_val(result, "details"),
-            "case": get_val(result, "case", "?"),
-            "wire": get_val(result, "wire", "?"),
+            KO.NAME: get_val(result, KO.NAME.value),
+            KO.GRADE: get_val(result, KO.GRADE.value),
+            KO.POINTS: get_val(result, KO.POINTS.value),
+            KO.DETAILS: get_val(result, KO.DETAILS.value),
+            KO.CASE: get_val(result, KO.CASE.value),
+            KO.WIRE: get_val(result, KO.WIRE.value),
 
-            "carriertype": get_val(result, "carriertype", "?"),
-            "carriername": get_val(result, "carriername", "?"),
-            "landingdist": get_val(result, "landingdist", -86),
-            "windondeck": get_val(result, "wind", "?", 1),
-            "missiontime": get_val(result, "mitime", "?"),
-            "missiondate": get_val(result, "midate", "?"),
-            "theatre": get_val(result, "theatre", "Unknown theatre")
+            KO.CARRIERTYPE: get_val(result, KO.CARRIERTYPE.value),
+            KO.CARRIERNAME: get_val(result, KO.CARRIERNAME.value),
+            KO.LANDINGDIST: get_val(result, KO.LANDINGDIST.value, -86),
+            KO.WIND: get_val(result, KO.WIND.value, precision=1),
+            KO.MITIME: get_val(result, KO.MITIME.value),
+            KO.MIDATE: get_val(result, KO.MIDATE.value),
+            KO.THEATRE: get_val(result, KO.THEATRE.value)
         }
-        self.__airframe_index = DataLimits.airframe_context(self.__oth_data["actype"])
+        self.__airframe_index = DataLimits.airframe_context(self.__oth_data[KO.AIRFRAME])
         self.__limits_aoa = DataLimits.data_limits_aoa(self.__airframe_index)
         self.__limits_lu = DataLimits.data_limits_lu()
         self.__limits_gs = DataLimits.data_limits_gs(self.__airframe_index)
         self.__limits_gse = DataLimits.data_limits_gse(self.__airframe_index)
 
     def dump_data_to_json(self):
+        def convert_enum_to_str(input_dict: Type[dict]) -> dict:
+            result_dict = {}
+            for k, v in input_dict.items():
+                if isinstance(k, Enum):
+                    k_new = k.value
+                else:
+                    k_new = k
+                if isinstance(v, Enum):
+                    v_new = v.value
+                else:
+                    v_new = v
+                result_dict[k_new] = v_new
+            return result_dict
+
         with open(self.__dump_name, "w") as data_dump:
-            data_dump.write(json.dumps(self.__raw_data, indent=4))
+            data_dump.write(json.dumps(convert_enum_to_str(self.raw_data), indent=4))
         with open(self.__dump_name, "w") as oth_data_dump:
-            oth_data_dump.write(json.dumps(self.__oth_data, indent=4))
+            oth_data_dump.write(json.dumps(convert_enum_to_str(self.oth_data), indent=4))
 
 
 class DownwindStripper:

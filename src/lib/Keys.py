@@ -1,22 +1,10 @@
 from enum import Enum
 
 
-class KeysAirframes:
-    @staticmethod
-    def type():
-        return "type"
-
-    @staticmethod
-    def f18():
-        return "F/A-18C"
-
-    @staticmethod
-    def f14():
-        return "F-14"
-
-    @staticmethod
-    def av8():
-        return "AV-8B"
+class KeysAirframes(Enum):
+    F18 = "FA-18C_hornet"
+    F14A = "F-14A-135-GR"
+    AV8 = "AV-8B"
 
 
 class KeysAoA(Enum):
@@ -49,75 +37,34 @@ class KeysGRV(Enum):
     ___LUR___ = "grv___lur___limit"
 
 
-class KeysCSV:
-    @staticmethod
-    def time():
-        return "Time"
+class KeysTrapsheet(Enum):
+    X = "X"
+    Z = "Z"
+    ALT = "Alt"
+    AOA = "AoA"
+    GSE = "GSE"
+    LUE = "LUE"
+    VY = "Vy"
+    ROLL = "Roll"
 
-    @staticmethod
-    def rho():
-        return "Rho"
 
-    @staticmethod
-    def x():
-        return "X"
-
-    @staticmethod
-    def z():
-        return "Z"
-
-    @staticmethod
-    def alt():
-        return "Alt"
-
-    @staticmethod
-    def aoa():
-        return "AoA"
-
-    @staticmethod
-    def gse():
-        return "GSE"
-
-    @staticmethod
-    def lue():
-        return "LUE"
-
-    @staticmethod
-    def vtot():
-        return "Vtot"
-
-    @staticmethod
-    def vy():
-        return "Vy"
-
-    @staticmethod
-    def gamma():
-        return "Gamma"
-
-    @staticmethod
-    def pitch():
-        return "Pitch"
-
-    @staticmethod
-    def roll():
-        return "Roll"
-
-    @staticmethod
-    def yaw():
-        return "Yaw"
-
-    @staticmethod
-    def step():
-        return "Step"
-
-    @staticmethod
-    def grade():
-        return "Grade"
-
-    @staticmethod
-    def points():
-        return "Points"
-
-    @staticmethod
-    def details():
-        return "Details"
+class KeysTrapfile(Enum):
+    TGROOVE = "Tgroove"
+    AIRFRAME = "airframe"
+    CARRIERNAME = "carriername"
+    CARRIERRWY = "carrierrwy"
+    CARRIERTYPE = "carriertype"
+    CASE = "case"
+    COMMAND = "command"
+    DETAILS = "details"
+    GRADE = "grade"
+    LANDINGDIST = "landingdist"
+    MIDATE = "midate"
+    MITIME = "mitime"
+    NAME = "name"
+    POINTS = "points"
+    SERVER_NAME = "server_name"
+    THEATRE = "theatre"
+    TRAPSHEET = "trapsheet"
+    WIND = "wind"
+    WIRE = "wire"

@@ -2,14 +2,15 @@ import math
 import numpy as np
 from matplotlib import pyplot as plt
 from scipy.interpolate import interp1d
-from src.lib.Keys import KeysCSV as K, KeysGRV as GRV, KeysGS as GS, KeysAoA as AoA
+from src.lib.Keys import KeysTrapsheet as K, KeysGRV as GRV, KeysGS as GS, KeysAoA as AoA
+from src.lib.Keys import KeysTrapfile as KO
 from src.lib.Utils import Utils
 from src.plotters.yautay_plot.assets import assets
 from src.lib.ParserAirbossData import ParserAirbossData, DownwindStripper
 
 
 class YautayPlotter(object):
-    def __init__(self,  data_object : ParserAirbossData):
+    def __init__(self,  data_object: ParserAirbossData):
         self.__data = data_object.data
         self.__oth_data = data_object.oth_data
         self.__airframe_index = data_object.airframe_index
@@ -134,7 +135,7 @@ class YautayPlotter(object):
                     lue_fill_limits(lu_lul_limit, lu_lur_limit, 'green')
                     lue_fill_limits(lu_lur_limit, lu__lur__limit, 'orange')
                     lue_fill_limits(lu__lur__limit, lu___lur___limit, 'red')
-                data_interpolate(ax=axins_grv, x=Utils.mtrs_to_cbls(dta[K.x()]), y=dta[K.lue()], X=Utils.mtrs_to_cbls(dta[K.x()]),
+                data_interpolate(ax=axins_grv, x=Utils.mtrs_to_cbls(dta[K.X]), y=dta[K.LUE], X=Utils.mtrs_to_cbls(dta[K.X]),
                                  C="ins_groove")
                 axins_grv.yaxis.tick_right()
                 axins_grv.xaxis.tick_top()
@@ -180,7 +181,7 @@ class YautayPlotter(object):
                 grv_fill_limits(lu__lul__limit, lu___lul___limit, 'red')
                 grv_fill_limits(lu__lur__limit, lu___lur___limit, 'red')
 
-            data_interpolate(ax=ax_grv, x=Utils.mtrs_to_cbls(dta[K.x()]), y=Utils.mtrs_to_cbls(dta[K.z()]), C="groove")
+            data_interpolate(ax=ax_grv, x=Utils.mtrs_to_cbls(dta[K.X]), y=Utils.mtrs_to_cbls(dta[K.Z]), C="groove")
 
             plot_distance_marks(ax_grv)
             ax_grv.invert_xaxis()
@@ -227,7 +228,7 @@ class YautayPlotter(object):
                     gse_fill_limits(gse_lo_limit, gse__lo__limit, 'orange')
                     gse_fill_limits(gse__lo__limit, gse___lo___limit, 'red')
 
-                data_interpolate(ax=axins_gs, x=Utils.mtrs_to_cbls(dta[K.x()]), y=dta[K.gse()], C="ins_gs")
+                data_interpolate(ax=axins_gs, x=Utils.mtrs_to_cbls(dta[K.X]), y=dta[K.GSE], C="ins_gs")
 
                 axins_gs.patch.set_alpha(0)
                 axins_gs.yaxis.tick_right()
@@ -270,7 +271,7 @@ class YautayPlotter(object):
                 gs_fill_limits(gs__lo__limit, gs___lo___limit, 'red')
                 gs_fill_limits(gs__hi__limit, gs___hi___limit, 'red')
 
-            data_interpolate(ax=ax_gs, x=Utils.mtrs_to_cbls(dta[K.x()]), y=Utils.mtrs_to_feet(dta[K.alt()]), C="gs")
+            data_interpolate(ax=ax_gs, x=Utils.mtrs_to_cbls(dta[K.X]), y=Utils.mtrs_to_feet(dta[K.ALT]), C="gs")
 
             plot_distance_marks(ax_gs)
             ax_gs.invert_xaxis()
@@ -313,7 +314,7 @@ class YautayPlotter(object):
                 aoa_fill_limits(aoa_fst_lo_limit, aoa_fst_med_limit, 'orange')
                 aoa_fill_limits(aoa_fst_med_limit, aoa_fst_hi_limit, 'red')
 
-            data_interpolate(ax=ax_aoa, x=Utils.mtrs_to_cbls(dta[K.x()]), y=dta[K.aoa()], C="aoa")
+            data_interpolate(ax=ax_aoa, x=Utils.mtrs_to_cbls(dta[K.X]), y=dta[K.AOA], C="aoa")
 
             plot_distance_marks(ax_aoa)
             ax_aoa.invert_xaxis()
@@ -368,8 +369,8 @@ class YautayPlotter(object):
 
             plot_lin_limits(-2.5, 'green', 'roll limit', axins_roll)
             plot_lin_limits(2.5, 'green', 'roll limit', axins_roll)
-            data_interpolate(ax=axins_vy, x=Utils.mtrs_to_cbls(dta[K.x()]), y=dta[K.vy()]*196.85, C="ins_vy")
-            data_interpolate(ax=axins_roll, x=Utils.mtrs_to_cbls(dta[K.x()]), y=dta[K.roll()], C="ins_roll")
+            data_interpolate(ax=axins_vy, x=Utils.mtrs_to_cbls(dta[K.X]), y=dta[K.VY]*196.85, C="ins_vy")
+            data_interpolate(ax=axins_roll, x=Utils.mtrs_to_cbls(dta[K.X]), y=dta[K.ROLL], C="ins_roll")
 
         plotter_groove()
         plotter_glideslope()
@@ -382,76 +383,76 @@ class YautayPlotter(object):
 
         # print(self.__oth_data)
 
-        title = str(f'Trapsheet of {self.__oth_data["player"]} [{self.__oth_data["actype"]}]')
-        title += str(f'\n{self.__oth_data["grade"]} {self.__oth_data["points"]}PT - {self.__oth_data["details"]}')
+        title = str(f'Trapsheet of {self.__oth_data[KO.NAME]} [{self.__oth_data[KO.AIRFRAME]}]')
+        title += str(f'\n{self.__oth_data[KO.GRADE]} {self.__oth_data[KO.POINTS]}PT - {self.__oth_data[KO.DETAILS]}')
 
         fig.suptitle(title, fontsize=12, color='black')
         fig.figure.figimage(plt.imread(assets.png_bckg_cag), 0, 0, alpha=1, zorder=-1, clip_on=True)
 
         def overlay_squadron():
             # Squadron
-            if "FA-18C" in self.__oth_data["actype"]:
+            if "FA-18C" in self.__oth_data[KO.AIRFRAME]:
                 fig.figure.figimage(plt.imread(assets.png_stamp_212), 0, 0, alpha=1, zorder=1,
                                     clip_on=True)
-            elif "F-14" in self.__oth_data["actype"]:
+            elif "F-14" in self.__oth_data[KO.AIRFRAME]:
                 fig.figure.figimage(plt.imread(assets.png_stamp_103), 0, 0, alpha=1, zorder=1,
                                     clip_on=True)
 
         def overlay_points():
             # Points
-            if self.__oth_data["points"] == 0:
+            if self.__oth_data[KO.POINTS] == 0:
                 fig.figure.figimage(plt.imread(assets.png_0pts), 0, 0, alpha=1, zorder=2,
                                     clip_on=True)
-            elif self.__oth_data["points"] == 1:
+            elif self.__oth_data[KO.POINTS] == 1:
                 fig.figure.figimage(plt.imread(assets.png_1pts), 0, 0, alpha=1, zorder=2,
                                     clip_on=True)
-            elif self.__oth_data["points"] == 2:
+            elif self.__oth_data[KO.POINTS] == 2:
                 fig.figure.figimage(plt.imread(assets.png_2pts), 0, 0, alpha=1, zorder=2,
                                     clip_on=True)
-            elif self.__oth_data["points"] == 2.5:
+            elif self.__oth_data[KO.POINTS] == 2.5:
                 fig.figure.figimage(plt.imread(assets.png_25pts), 0, 0, alpha=1, zorder=2,
                                     clip_on=True)
-            elif self.__oth_data["points"] == 3:
+            elif self.__oth_data[KO.POINTS] == 3:
                 fig.figure.figimage(plt.imread(assets.png_3pts), 0, 0, alpha=1, zorder=2,
                                     clip_on=True)
-            elif self.__oth_data["points"] == 4:
+            elif self.__oth_data[KO.POINTS] == 4:
                 fig.figure.figimage(plt.imread(assets.png_4pts), 0, 0, alpha=1, zorder=2,
                                     clip_on=True)
-            elif self.__oth_data["points"] == 5:
+            elif self.__oth_data[KO.POINTS] == 5:
                 fig.figure.figimage(plt.imread(assets.png_5pts), 0, 0, alpha=1, zorder=2,
                                     clip_on=True)
 
         def overlay_stamps_and_comments():
             #Stamps
-            if self.__oth_data["case"] == 3:
+            if self.__oth_data[KO.CASE] == 3:
                 fig.figure.figimage(plt.imread(assets.png_stamp_nightpass), 0, 0, alpha=1, zorder=4,
                                     clip_on=True)
-            if self.__oth_data["grade"] == "OK":
+            if self.__oth_data[KO.GRADE] == "OK":
                 fig.figure.figimage(plt.imread(assets.png_stamp_perfect), 0, 0, alpha=1, zorder=4,
                                     clip_on=True)
                 fig.figure.figimage(plt.imread(assets.png_comment_unicorn), 0, 0, alpha=1, zorder=4,
                                     clip_on=True)
-            elif self.__oth_data["grade"] == "CUT":
+            elif self.__oth_data[KO.GRADE] == "CUT":
                 fig.figure.figimage(plt.imread(assets.png_stamp_cut_pass), 0, 0, alpha=1, zorder=4,
                                     clip_on=True)
                 fig.figure.figimage(plt.imread(assets.png_comment_cut_pass), 0, 0, alpha=1, zorder=4,
                                     clip_on=True)
-            elif self.__oth_data["grade"] == "WO":
+            elif self.__oth_data[KO.GRADE] == "WO":
                 fig.figure.figimage(plt.imread(assets.png_stamp_wave_off), 0, 0, alpha=1, zorder=4,
                                     clip_on=True)
                 fig.figure.figimage(plt.imread(assets.png_comment_wave_off), 0, 0, alpha=1, zorder=4,
                                     clip_on=True)
-            elif self.__oth_data["grade"] == "NG":
+            elif self.__oth_data[KO.GRADE] == "NG":
                 fig.figure.figimage(plt.imread(assets.png_stamp_no_grade), 0, 0, alpha=1, zorder=4,
                                     clip_on=True)
                 fig.figure.figimage(plt.imread(assets.png_comment_no_grade), 0, 0, alpha=1, zorder=4,
                                     clip_on=True)
-            elif self.__oth_data["grade"] == "BLT":
+            elif self.__oth_data[KO.GRADE] == "BLT":
                 fig.figure.figimage(plt.imread(assets.png_stamp_bolter), 0, 0, alpha=1, zorder=4,
                                     clip_on=True)
                 fig.figure.figimage(plt.imread(assets.png_comment_bolter), 0, 0, alpha=1, zorder=4,
                                     clip_on=True)
-            elif self.__oth_data["grade"] == "FAIR":
+            elif self.__oth_data[KO.GRADE] == "FAIR":
                 fig.figure.figimage(plt.imread(assets.png_stamp_fair), 0, 0, alpha=1, zorder=4,
                                     clip_on=True)
                 fig.figure.figimage(plt.imread(assets.png_comment_fair), 0, 0, alpha=1, zorder=4,

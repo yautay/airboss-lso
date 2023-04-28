@@ -1,3 +1,6 @@
+from enum import Enum
+
+
 class Utils:
 
     @staticmethod
@@ -52,7 +55,7 @@ class Utils:
             return -10 + (50 / 30 * units)
 
     @staticmethod
-    def get_val(table: dict, key: str, nil: str = "", precision: int or None = None) -> bool or int or str:
+    def get_val(table: dict, key: Enum or str, nil: str or int = "N/A", precision: int or None = None) -> bool or int or str:
         if key in table.keys():
             value = table[key]
             if value == "false":
@@ -62,6 +65,8 @@ class Utils:
             elif isinstance(value, int):
                 if precision:
                     return str(round(value, precision))
+                else:
+                    return str(value)
             else:
                 return value
         else:

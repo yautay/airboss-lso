@@ -2,7 +2,7 @@ import math
 import numpy as np
 from matplotlib import pyplot as plt
 from src.lib.ParserAirbossData import DownwindStripper
-from src.lib.Keys import KeysCSV as K, KeysGRV as GRV, KeysGS as GS, KeysAoA as AoA
+from src.lib.Keys import KeysTrapsheet as K, KeysGRV as GRV, KeysGS as GS, KeysAoA as AoA
 from src.lib.Utils import Utils
 from src.plotters.yautay_plot.assets import assets
 from src.lib.ParserAirbossData import ParserAirbossData
@@ -133,8 +133,8 @@ class RawDataPlotter(object):
                     lue_fill_limits(lu_lul_limit, lu_lur_limit, 'green')
                     lue_fill_limits(lu_lur_limit, lu__lur__limit, 'orange')
                     lue_fill_limits(lu__lur__limit, lu___lur___limit, 'red')
-                data_interpolate(ax=axins_grv, x=Utils.mtrs_to_cbls(dta[K.x()]), y=dta[K.lue()],
-                                 X=Utils.mtrs_to_cbls(dta[K.x()]),
+                data_interpolate(ax=axins_grv, x=Utils.mtrs_to_cbls(dta[K.X]), y=dta[K.LUE],
+                                 X=Utils.mtrs_to_cbls(dta[K.X]),
                                  C="ins_groove")
                 axins_grv.yaxis.tick_right()
                 axins_grv.xaxis.tick_top()
@@ -180,7 +180,7 @@ class RawDataPlotter(object):
                 grv_fill_limits(lu__lul__limit, lu___lul___limit, 'red')
                 grv_fill_limits(lu__lur__limit, lu___lur___limit, 'red')
 
-            data_interpolate(ax=ax_grv, x=Utils.mtrs_to_cbls(dta[K.x()]), y=Utils.mtrs_to_cbls(dta[K.z()]), C="groove")
+            data_interpolate(ax=ax_grv, x=Utils.mtrs_to_cbls(dta[K.X]), y=Utils.mtrs_to_cbls(dta[K.Z]), C="groove")
 
             plot_distance_marks(ax_grv)
             ax_grv.invert_xaxis()
@@ -227,7 +227,7 @@ class RawDataPlotter(object):
                     gse_fill_limits(gse_lo_limit, gse__lo__limit, 'orange')
                     gse_fill_limits(gse__lo__limit, gse___lo___limit, 'red')
 
-                data_interpolate(ax=axins_gs, x=Utils.mtrs_to_cbls(dta[K.x()]), y=dta[K.gse()], C="ins_gs")
+                data_interpolate(ax=axins_gs, x=Utils.mtrs_to_cbls(dta[K.X]), y=dta[K.GSE], C="ins_gs")
 
                 axins_gs.patch.set_alpha(0)
                 axins_gs.yaxis.tick_right()
@@ -270,7 +270,7 @@ class RawDataPlotter(object):
                 gs_fill_limits(gs__lo__limit, gs___lo___limit, 'red')
                 gs_fill_limits(gs__hi__limit, gs___hi___limit, 'red')
 
-            data_interpolate(ax=ax_gs, x=Utils.mtrs_to_cbls(dta[K.x()]), y=Utils.mtrs_to_feet(dta[K.alt()]), C="gs")
+            data_interpolate(ax=ax_gs, x=Utils.mtrs_to_cbls(dta[K.X]), y=Utils.mtrs_to_feet(dta[K.ALT]), C="gs")
 
             plot_distance_marks(ax_gs)
             ax_gs.invert_xaxis()
@@ -313,7 +313,7 @@ class RawDataPlotter(object):
                 aoa_fill_limits(aoa_fst_lo_limit, aoa_fst_med_limit, 'orange')
                 aoa_fill_limits(aoa_fst_med_limit, aoa_fst_hi_limit, 'red')
 
-            data_interpolate(ax=ax_aoa, x=Utils.mtrs_to_cbls(dta[K.x()]), y=dta[K.aoa()], C="aoa")
+            data_interpolate(ax=ax_aoa, x=Utils.mtrs_to_cbls(dta[K.X]), y=dta[K.AOA], C="aoa")
 
             plot_distance_marks(ax_aoa)
             ax_aoa.invert_xaxis()
@@ -368,8 +368,8 @@ class RawDataPlotter(object):
 
             plot_lin_limits(-2.5, 'green', 'roll limit', axins_roll)
             plot_lin_limits(2.5, 'green', 'roll limit', axins_roll)
-            data_interpolate(ax=axins_vy, x=Utils.mtrs_to_cbls(dta[K.x()]), y=dta[K.vy()] * 196.85, C="ins_vy")
-            data_interpolate(ax=axins_roll, x=Utils.mtrs_to_cbls(dta[K.x()]), y=dta[K.roll()], C="ins_roll")
+            data_interpolate(ax=axins_vy, x=Utils.mtrs_to_cbls(dta[K.X]), y=dta[K.VY] * 196.85, C="ins_vy")
+            data_interpolate(ax=axins_roll, x=Utils.mtrs_to_cbls(dta[K.X]), y=dta[K.ROLL], C="ins_roll")
 
         plotter_groove()
         plotter_glideslope()
