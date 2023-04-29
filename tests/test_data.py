@@ -17,14 +17,8 @@ for filename in os.listdir(os.path.join(ROOT_DIR, "tests", "dumps")):
             dump_data = json.load(dump_file)
         except Exception as e:
             print(f"{Colors.FAIL} {str(e)} {file_path} {Colors.ENDC}")
-        parser_airboss_dump = ParserAirbossData()
         try:
-            parser_airboss_dump.init_data(result=dump_data, filename=plot_json)
-        except Exception as e:
-            print(f"{Colors.FAIL} {str(e)} {file_path} {Colors.ENDC}")
-        parser_airboss_dump.dump_data_to_json()
-        plotter = RawDataPlotter(parser_airboss_dump)
-        try:
+            plotter = RawDataPlotter(rcvd_data=dump_data, dump_parsed_data=plot_json)
             plotter.plot_case(plot_path)
         except Exception as e:
             print(f"{Colors.FAIL} {str(e)} {file_path} {Colors.ENDC}")

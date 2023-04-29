@@ -2,9 +2,10 @@ import datetime
 import json
 import os.path
 from enum import Enum
-from typing import Type, Any
+from typing import Any
 
 import numpy as np
+from numpy import ndarray
 
 from root import ROOT_DIR
 from src.lib.Bcolors import Bcolors as Colors
@@ -24,7 +25,7 @@ class ParserAirbossData:
         self.dump_name: str or None = None
         self.limits_lue: dict = {}
         self.raw_data: dict = {}
-        self.data: dict[KeysTrapsheet, dict | Any] = {}
+        self.data: dict[KeysTrapsheet, ndarray] = {}
         self.oth_data: dict[KeysTrapfile, dict | Any] = {}
         self.airframe_index: KeysAirframes or None = None
         self.limits_aoa: dict[KeysAoA, float] = {}
@@ -51,10 +52,6 @@ class ParserAirbossData:
                     print("END\n")
             except Exception as e:
                 print(f"{Colors.FAIL} e {Colors.ENDC}")
-
-        print(result)
-        print(result.keys())
-
         self.raw_data = {
             K.X: result[KO.TRAPSHEET.value][K.X.value],
             K.Z: result[KO.TRAPSHEET.value][K.Z.value],
@@ -125,9 +122,6 @@ class ParserAirbossData:
 
         with open(self.dump_name, "w") as oth_data_dump:
             oth_data_dump.write(json.dumps(oth_data, indent=4))
-
-
-
 
 class DownwindStripper:
     @staticmethod

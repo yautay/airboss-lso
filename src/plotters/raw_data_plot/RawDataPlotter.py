@@ -5,77 +5,36 @@ from src.lib.ParserAirbossData import DownwindStripper
 from src.lib.Keys import KeysTrapsheet as K, KeysGRV as GRV, KeysGS as GS, KeysAoA as AoA
 from src.lib.Keys import KeysTrapfile as KO
 from src.lib.Utils import Utils
+from src.plotters.Plotter import Plotter
 from src.plotters.yautay_plot.assets import assets
-from src.lib.ParserAirbossData import ParserAirbossData
 
 
-class RawDataPlotter(object):
-    def __init__(self, data_object: ParserAirbossData):
-        self.__data = data_object.data
-        self.__oth_data = data_object.oth_data
-        self.__airframe_index = data_object.airframe_index
-        self.__limits_aoa = data_object.limits_aoa
-        self.__limits_lu = data_object.limits_lu
-        self.__limits_lue = data_object.limits_lue
-        self.__limits_gs = data_object.limits_gs
-        self.__limits_gse = data_object.limits_gse
+class RawDataPlotter(Plotter):
+    def __init__(self, rcvd_data: dict, dump_rcvd_data: bool = False, dump_parsed_data: str or None = None):
+        super().__init__(rcvd_data, dump_rcvd_data, dump_parsed_data)
 
-    def plot_case(self, file_name: str = "funkman_plot" or None, fillins: bool = False):
+    def plot_case(self, file_name: str or None = None, fillins: bool = False):
         def data_interpolate(smooth: int = 500, **kwargs):
-            ax = kwargs["ax"]
-            x_raw = kwargs["x"]
-            y_raw = kwargs["y"]
+            if self.groove_telemetry:
+                ax = kwargs["ax"]
+                x_raw = kwargs["x"]
+                y_raw = kwargs["y"]
 
-            downwind_pool = -len(x_raw) + DownwindStripper.downwind_stripper(x_raw)
+                downwind_pool = -len(x_raw) + DownwindStripper.downwind_stripper(x_raw)
 
-            x = x_raw[downwind_pool:]
-            y = y_raw[downwind_pool:]
+                x = x_raw[downwind_pool:]
+                y = y_raw[downwind_pool:]
 
-            ax.plot(x_raw, y_raw, linewidth=track_line_width, label="Track",
-                    color=track_line_colour)
+                ax.plot(x_raw, y_raw, linewidth=track_line_width, label="Track",
+                        color=track_line_colour)
 
-            ax.plot(x, y, linewidth=2, label="Stripped",
-                    color="red")
-            # print(Bcolors.OKBLUE + context + Bcolors.ENDC)
-
-        dta = self.__data
+                ax.plot(x, y, linewidth=2, label="Stripped",
+                        color="red")
 
         # X-axis setup [cbls]
         x_axis_limit_left = 15
         x_axis_limit_right = 0
         limits_x_axis = np.linspace(x_axis_limit_right, x_axis_limit_left, x_axis_limit_left)
-
-        # AoA Limits
-        aoa_slo_hi_limit = self.__limits_aoa[AoA.SLO_HI]
-        aoa_slo_med_limit = self.__limits_aoa[AoA.SLO_MED]
-        aoa_slo_lo_limit = self.__limits_aoa[AoA.SLO_LO]
-        aoa_fst_lo_limit = self.__limits_aoa[AoA.FAST_LO]
-        aoa_fst_med_limit = self.__limits_aoa[AoA.FAST_MED]
-        aoa_fst_hi_limit = self.__limits_aoa[AoA.FAST_HI]
-
-        # LU Limits
-        lu___lul___limit = self.__limits_lu[GRV.___LUL___]
-        lu__lul__limit = self.__limits_lu[GRV.__LUL__]
-        lu_lul_limit = self.__limits_lu[GRV.LUL]
-        lu_lur_limit = self.__limits_lu[GRV.LUR]
-        lu__lur__limit = self.__limits_lu[GRV.__LUR__]
-        lu___lur___limit = self.__limits_lu[GRV.___LUR___]
-
-        # GS Limits
-        gs___hi___limit = self.__limits_gs[GS.___HI___]
-        gs__hi__limit = self.__limits_gs[GS.__HI__]
-        gs_hi_limit = self.__limits_gs[GS.HI]
-        gs_lo_limit = self.__limits_gs[GS.LO]
-        gs__lo__limit = self.__limits_gs[GS.__LO__]
-        gs___lo___limit = self.__limits_gs[GS.___LO___]
-
-        # GSE Limits
-        gse___hi___limit = self.__limits_gse[GS.___HI___]
-        gse__hi__limit = self.__limits_gse[GS.__HI__]
-        gse_hi_limit = self.__limits_gse[GS.HI]
-        gse_lo_limit = self.__limits_gse[GS.LO]
-        gse__lo__limit = self.__limits_gse[GS.__LO__]
-        gse___lo___limit = self.__limits_gse[GS.___LO___]
 
         line_alpha = .3
         fill_alpha = .05
@@ -121,21 +80,21 @@ class RawDataPlotter(object):
                         np.linspace(limit_2, limit_2, x1),
                         color=colour, alpha=fill_alpha)
 
-                lue_plot_limits(lu___lul___limit, 'red', '__LUL__')
-                lue_plot_limits(lu__lul__limit, 'orange', 'LUL')
-                lue_plot_limits(lu_lul_limit, 'green', '(LUL)')
-                lue_plot_limits(lu_lur_limit, 'green', '(LUR)')
-                lue_plot_limits(lu__lur__limit, 'orange', 'LUR')
-                lue_plot_limits(lu___lur___limit, 'red', '__LUL__')
+                lue_plot_limits(self.lu___lul___limit, 'red', '__LUL__')
+                lue_plot_limits(self.lu__lul__limit, 'orange', 'LUL')
+                lue_plot_limits(self.lu_lul_limit, 'green', '(LUL)')
+                lue_plot_limits(self.lu_lur_limit, 'green', '(LUR)')
+                lue_plot_limits(self.lu__lur__limit, 'orange', 'LUR')
+                lue_plot_limits(self.lu___lur___limit, 'red', '__LUL__')
 
                 if fillins:
-                    lue_fill_limits(lu___lul___limit, lu__lul__limit, 'red')
-                    lue_fill_limits(lu__lul__limit, lu_lul_limit, 'orange')
-                    lue_fill_limits(lu_lul_limit, lu_lur_limit, 'green')
-                    lue_fill_limits(lu_lur_limit, lu__lur__limit, 'orange')
-                    lue_fill_limits(lu__lur__limit, lu___lur___limit, 'red')
-                data_interpolate(ax=axins_grv, x=Utils.mtrs_to_cbls(dta[K.X]), y=dta[K.LUE],
-                                 X=Utils.mtrs_to_cbls(dta[K.X]),
+                    lue_fill_limits(self.lu___lul___limit, self.lu__lul__limit, 'red')
+                    lue_fill_limits(self.lu__lul__limit, self.lu_lul_limit, 'orange')
+                    lue_fill_limits(self.lu_lul_limit, self.lu_lur_limit, 'green')
+                    lue_fill_limits(self.lu_lur_limit, self.lu__lur__limit, 'orange')
+                    lue_fill_limits(self.lu__lur__limit, self.lu___lur___limit, 'red')
+                data_interpolate(ax=axins_grv, x=Utils.mtrs_to_cbls(self.data[K.X]), y=self.data[K.LUE],
+                                 X=Utils.mtrs_to_cbls(self.data[K.X]),
                                  C="ins_groove")
                 axins_grv.yaxis.tick_right()
                 axins_grv.xaxis.tick_top()
@@ -167,21 +126,20 @@ class RawDataPlotter(object):
             ax_grv.set_xlim(x_axis_limit_right, x_axis_limit_left)
             ax_grv.patch.set_alpha(0)
 
-            grv_plot_limits(lu___lul___limit, 'red', '__LUL__')
-            grv_plot_limits(lu__lul__limit, 'orange', 'LUL')
-            grv_plot_limits(lu_lul_limit, 'green', '(LUL)')
-            grv_plot_limits(lu_lur_limit, 'green', '(LUR)')
-            grv_plot_limits(lu__lur__limit, 'orange', 'LUR')
-            grv_plot_limits(lu___lur___limit, 'red', '__LUR__')
+            grv_plot_limits(self.lu___lul___limit, 'red', '__LUL__')
+            grv_plot_limits(self.lu__lul__limit, 'orange', 'LUL')
+            grv_plot_limits(self.lu_lul_limit, 'green', '(LUL)')
+            grv_plot_limits(self.lu_lur_limit, 'green', '(LUR)')
+            grv_plot_limits(self.lu__lur__limit, 'orange', 'LUR')
+            grv_plot_limits(self.lu___lur___limit, 'red', '__LUR__')
 
             if fillins:
-                grv_fill_limits(lu_lul_limit, lu_lur_limit, 'green')
-                grv_fill_limits(lu_lul_limit, lu__lul__limit, 'orange')
-                grv_fill_limits(lu_lur_limit, lu__lur__limit, 'orange')
-                grv_fill_limits(lu__lul__limit, lu___lul___limit, 'red')
-                grv_fill_limits(lu__lur__limit, lu___lur___limit, 'red')
-
-            data_interpolate(ax=ax_grv, x=Utils.mtrs_to_cbls(dta[K.X]), y=Utils.mtrs_to_cbls(dta[K.Z]), C="groove")
+                grv_fill_limits(self.lu_lul_limit, self.lu_lur_limit, 'green')
+                grv_fill_limits(self.lu_lul_limit, self.lu__lul__limit, 'orange')
+                grv_fill_limits(self.lu_lur_limit, self.lu__lur__limit, 'orange')
+                grv_fill_limits(self.lu__lul__limit, self.lu___lul___limit, 'red')
+                grv_fill_limits(self.lu__lur__limit, self.lu___lur___limit, 'red')
+            data_interpolate(ax=ax_grv, x=Utils.mtrs_to_cbls(self.data[K.X]), y=Utils.mtrs_to_cbls(self.data[K.Z]), C="groove")
 
             plot_distance_marks(ax_grv)
             ax_grv.invert_xaxis()
@@ -196,7 +154,7 @@ class RawDataPlotter(object):
 
             def plotter_gse():
                 axins_gs = ax_gs.inset_axes([.6, .6, .4, .4], transform=None, alpha=0.5, clip_path=None)
-                x1, x2, y1, y2 = 6, 0, gse___lo___limit - .5, gse___hi___limit + .5
+                x1, x2, y1, y2 = 6, 0, self.gse___lo___limit - .5, self.gse___hi___limit + .5
                 axins_gs.set_xlim(x1, x2)
                 axins_gs.set_ylim(y1, y2)
                 axins_gs.text(.5, .9, "GSE [deg/cbls]", horizontalalignment='center',
@@ -214,21 +172,20 @@ class RawDataPlotter(object):
                         np.linspace(limit_2, limit_2, x1),
                         color=colour, alpha=fill_alpha)
 
-                gse_plot_limits(gse___hi___limit, 'red', '__HI__')
-                gse_plot_limits(gse__hi__limit, 'orange', 'H')
-                gse_plot_limits(gse_hi_limit, 'green', '(H)')
-                gse_plot_limits(gse_lo_limit, 'green', '(L)')
-                gse_plot_limits(gse__lo__limit, 'orange', 'L')
-                gse_plot_limits(gse___lo___limit, 'red', '__L__')
+                gse_plot_limits(self.gse___hi___limit, 'red', '__HI__')
+                gse_plot_limits(self.gse__hi__limit, 'orange', 'H')
+                gse_plot_limits(self.gse_hi_limit, 'green', '(H)')
+                gse_plot_limits(self.gse_lo_limit, 'green', '(L)')
+                gse_plot_limits(self.gse__lo__limit, 'orange', 'L')
+                gse_plot_limits(self.gse___lo___limit, 'red', '__L__')
 
                 if fillins:
-                    gse_fill_limits(gse___hi___limit, gse__hi__limit, 'red')
-                    gse_fill_limits(gse__hi__limit, gse_hi_limit, 'orange')
-                    gse_fill_limits(gse_hi_limit, gse_lo_limit, 'green')
-                    gse_fill_limits(gse_lo_limit, gse__lo__limit, 'orange')
-                    gse_fill_limits(gse__lo__limit, gse___lo___limit, 'red')
-
-                data_interpolate(ax=axins_gs, x=Utils.mtrs_to_cbls(dta[K.X]), y=dta[K.GSE], C="ins_gs")
+                    gse_fill_limits(self.gse___hi___limit, self.gse__hi__limit, 'red')
+                    gse_fill_limits(self.gse__hi__limit, self.gse_hi_limit, 'orange')
+                    gse_fill_limits(self.gse_hi_limit, self.gse_lo_limit, 'green')
+                    gse_fill_limits(self.gse_lo_limit, self.gse__lo__limit, 'orange')
+                    gse_fill_limits(self.gse__lo__limit, self.gse___lo___limit, 'red')
+                data_interpolate(ax=axins_gs, x=Utils.mtrs_to_cbls(self.data[K.X]), y=self.data[K.GSE], C="ins_gs")
 
                 axins_gs.patch.set_alpha(0)
                 axins_gs.yaxis.tick_right()
@@ -257,21 +214,20 @@ class RawDataPlotter(object):
             ax_gs.set_xlabel("distance [Cbls]")
             ax_gs.patch.set_alpha(0)
 
-            gs_plot_limits(gs___hi___limit, 'red', '__HI__')
-            gs_plot_limits(gs__hi__limit, 'orange', 'H')
-            gs_plot_limits(gs_hi_limit, 'green', '(H)')
-            gs_plot_limits(gs_lo_limit, 'green', '(LO)')
-            gs_plot_limits(gs__lo__limit, 'orange', 'LO')
-            gs_plot_limits(gs___lo___limit, 'red', '__LO__')
+            gs_plot_limits(self.gs___hi___limit, 'red', '__HI__')
+            gs_plot_limits(self.gs__hi__limit, 'orange', 'H')
+            gs_plot_limits(self.gs_hi_limit, 'green', '(H)')
+            gs_plot_limits(self.gs_lo_limit, 'green', '(LO)')
+            gs_plot_limits(self.gs__lo__limit, 'orange', 'LO')
+            gs_plot_limits(self.gs___lo___limit, 'red', '__LO__')
 
             if fillins:
-                gs_fill_limits(gs_lo_limit, gs_hi_limit, 'green')
-                gs_fill_limits(gs_lo_limit, gs__lo__limit, 'orange')
-                gs_fill_limits(gs_hi_limit, gs__hi__limit, 'orange')
-                gs_fill_limits(gs__lo__limit, gs___lo___limit, 'red')
-                gs_fill_limits(gs__hi__limit, gs___hi___limit, 'red')
-
-            data_interpolate(ax=ax_gs, x=Utils.mtrs_to_cbls(dta[K.X]), y=Utils.mtrs_to_feet(dta[K.ALT]), C="gs")
+                gs_fill_limits(self.gs_lo_limit, self.gs_hi_limit, 'green')
+                gs_fill_limits(self.gs_lo_limit, self.gs__lo__limit, 'orange')
+                gs_fill_limits(self.gs_hi_limit, self.gs__hi__limit, 'orange')
+                gs_fill_limits(self.gs__lo__limit, self.gs___lo___limit, 'red')
+                gs_fill_limits(self.gs__hi__limit, self.gs___hi___limit, 'red')
+            data_interpolate(ax=ax_gs, x=Utils.mtrs_to_cbls(self.data[K.X]), y=Utils.mtrs_to_feet(self.data[K.ALT]), C="gs")
 
             plot_distance_marks(ax_gs)
             ax_gs.invert_xaxis()
@@ -280,8 +236,8 @@ class RawDataPlotter(object):
 
         def plotter_aoa():
             # AoA
-            aoa_y_axis_limit_low = self.__limits_aoa[AoA.FAST_HI] - .5
-            aoa_y_axis_limit_hi = self.__limits_aoa[AoA.SLO_HI] + .5
+            aoa_y_axis_limit_low = self.limits_aoa[AoA.FAST_HI] - .5
+            aoa_y_axis_limit_hi = self.limits_aoa[AoA.SLO_HI] + .5
             ax_aoa.set_ylim(aoa_y_axis_limit_low, aoa_y_axis_limit_hi)
             ax_aoa.set_xlim(x_axis_limit_right, x_axis_limit_left)
             ax_aoa.set_ylabel('AoA [deg]')
@@ -300,21 +256,20 @@ class RawDataPlotter(object):
                     np.linspace(limit_2, limit_2, x_axis_limit_left),
                     color=colour, alpha=.03)
 
-            aoa_plot_limits(aoa_slo_hi_limit, 'red', "__SLO__")
-            aoa_plot_limits(aoa_slo_med_limit, 'orange', "SLO")
-            aoa_plot_limits(aoa_slo_lo_limit, 'green', "(SLO)")
-            aoa_plot_limits(aoa_fst_lo_limit, 'green', "(F)")
-            aoa_plot_limits(aoa_fst_med_limit, 'orange', "F")
-            aoa_plot_limits(aoa_fst_hi_limit, 'red', "__F__")
+            aoa_plot_limits(self.aoa_slo_hi_limit, 'red', "__SLO__")
+            aoa_plot_limits(self.aoa_slo_med_limit, 'orange', "SLO")
+            aoa_plot_limits(self.aoa_slo_lo_limit, 'green', "(SLO)")
+            aoa_plot_limits(self.aoa_fst_lo_limit, 'green', "(F)")
+            aoa_plot_limits(self.aoa_fst_med_limit, 'orange', "F")
+            aoa_plot_limits(self.aoa_fst_hi_limit, 'red', "__F__")
 
             if fillins:
-                aoa_fill_limits(aoa_slo_hi_limit, aoa_slo_med_limit, 'red')
-                aoa_fill_limits(aoa_slo_med_limit, aoa_slo_lo_limit, 'orange')
-                aoa_fill_limits(aoa_slo_lo_limit, aoa_fst_lo_limit, 'green')
-                aoa_fill_limits(aoa_fst_lo_limit, aoa_fst_med_limit, 'orange')
-                aoa_fill_limits(aoa_fst_med_limit, aoa_fst_hi_limit, 'red')
-
-            data_interpolate(ax=ax_aoa, x=Utils.mtrs_to_cbls(dta[K.X]), y=dta[K.AOA], C="aoa")
+                aoa_fill_limits(self.aoa_slo_hi_limit, self.aoa_slo_med_limit, 'red')
+                aoa_fill_limits(self.aoa_slo_med_limit, self.aoa_slo_lo_limit, 'orange')
+                aoa_fill_limits(self.aoa_slo_lo_limit, self.aoa_fst_lo_limit, 'green')
+                aoa_fill_limits(self.aoa_fst_lo_limit, self.aoa_fst_med_limit, 'orange')
+                aoa_fill_limits(self.aoa_fst_med_limit, self.aoa_fst_hi_limit, 'red')
+            data_interpolate(ax=ax_aoa, x=Utils.mtrs_to_cbls(self.data[K.X]), y=self.data[K.AOA], C="aoa")
 
             plot_distance_marks(ax_aoa)
             ax_aoa.invert_xaxis()
@@ -369,8 +324,8 @@ class RawDataPlotter(object):
 
             plot_lin_limits(-2.5, 'green', 'roll limit', axins_roll)
             plot_lin_limits(2.5, 'green', 'roll limit', axins_roll)
-            data_interpolate(ax=axins_vy, x=Utils.mtrs_to_cbls(dta[K.X]), y=dta[K.VY] * 196.85, C="ins_vy")
-            data_interpolate(ax=axins_roll, x=Utils.mtrs_to_cbls(dta[K.X]), y=dta[K.ROLL], C="ins_roll")
+            data_interpolate(ax=axins_vy, x=Utils.mtrs_to_cbls(self.data[K.X]), y=self.data[K.VY] * 196.85, C="ins_vy")
+            data_interpolate(ax=axins_roll, x=Utils.mtrs_to_cbls(self.data[K.X]), y=self.data[K.ROLL], C="ins_roll")
 
         plotter_groove()
         plotter_glideslope()
@@ -379,11 +334,11 @@ class RawDataPlotter(object):
 
         plt.xlim(x_axis_limit_left, x_axis_limit_right)
 
-        title = str(f'Trapsheet of {self.__oth_data[KO.NAME]} [{self.__oth_data[KO.AIRFRAME]}]')
-        title += str(f'\n{self.__oth_data[KO.GRADE]} {self.__oth_data[KO.POINTS]}PT - {self.__oth_data[KO.DETAILS]}')
+        title = str(f'Trapsheet of {self.oth_data[KO.NAME]} [{self.oth_data[KO.AIRFRAME]}]')
+        title += str(f'\n{self.oth_data[KO.GRADE]} {self.oth_data[KO.POINTS]}PT - {self.oth_data[KO.DETAILS]}')
 
         fig.suptitle(title, fontsize=12, color='black')
-        fig.figure.figimage(plt.imread(assets.png_bckg_cag), 0, 0, alpha=1, zorder=-1, clip_on=True)
+        fig.figure.figimage(plt.imread(assets.png_bckg_clean), 0, 0, alpha=1, zorder=-1, clip_on=True)
 
         if file_name:
             fig.savefig(file_name + "-alpha", transparent=True)

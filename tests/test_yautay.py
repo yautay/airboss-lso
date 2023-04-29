@@ -15,7 +15,5 @@ for filename in os.listdir(os.path.join(ROOT_DIR, "tests", "dumps")):
             dump_data = json.load(dump_file)
         except Exception as e:
             print(f"{Colors.FAIL} e {file_path} {Colors.ENDC}")
-        parser_airboss_dump = ParserAirbossData()
-        parser_airboss_dump.init_data(dump_data)
-        plotter = YautayPlotter(parser_airboss_dump)
+        plotter = YautayPlotter(rcvd_data=dump_data)
         plotter.plot_case(plot_path)
