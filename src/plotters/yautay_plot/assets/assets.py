@@ -37,6 +37,3 @@ png_comment_wave_off = os.path.join(ASSETS_DIR, "comment_WO.png")
 # bckg
 png_bckg_clean = os.path.join(ASSETS_DIR, "png_bckg_clean.png")
 png_bckg_cag = os.path.join(ASSETS_DIR, "png_bckg_CAG_sign.png")
-
-#debug
-png_stamp_error = os.path.join(ASSETS_DIR, "error_stamp.png")

@@ -3,7 +3,6 @@ import os
 from src.lib.Bcolors import Bcolors as Colors
 from root import ROOT_DIR
 from src.lib.ParserAirbossData import ParserAirbossData
-from tests.lib import get_result_trap
 from src.plotters.funkman_plot.FunkmanPlot import Plot as FunkmanPlot
 
 # fplot = Plot()
@@ -21,12 +20,11 @@ for filename in os.listdir(os.path.join(ROOT_DIR, "tests", "dumps")):
     with open(file_path, "r") as dump_file:
         try:
             dump_data = json.load(dump_file)
-            results = get_result_trap(dump_data)
         except Exception as e:
             print(f"{Colors.FAIL} e {file_path} {Colors.ENDC}")
 
         parser_airboss_dump = ParserAirbossData()
-        parser_airboss_dump.init_data(results)
+        parser_airboss_dump.init_data(dump_data)
 
         test_data = parser_airboss_dump.oth_data
         test_data["trapsheet"] = parser_airboss_dump.data

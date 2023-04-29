@@ -14,7 +14,7 @@ class DataLimits:
     """Class contains common limitations"""
 
     @staticmethod
-    def airframe_context(airframe_text: str) -> Enum:
+    def airframe_context(airframe_text: str) -> KAIRFRAME:
         """Gets airframe context based on airframe type
 
         Parameters
@@ -41,7 +41,7 @@ class DataLimits:
             return KAIRFRAME.AV8B
 
     @staticmethod
-    def data_limits_aoa(airframe_index: Enum) -> dict:
+    def data_limits_aoa(airframe_index: Enum) -> dict[AoA, float]:
         """Gets airframe context based AoA limits
 
         Parameters
@@ -96,7 +96,7 @@ class DataLimits:
             }
 
     @staticmethod
-    def data_limits_gs(airframe_index: Enum) -> dict:
+    def data_limits_gs(airframe_index: Enum) -> dict[GS, float]:
         """Gets airframe context based GS limits
 
         Parameters
@@ -132,7 +132,7 @@ class DataLimits:
             }
 
     @staticmethod
-    def data_limits_gse(airframe_index: Enum) -> dict:
+    def data_limits_gse(airframe_index: Enum) -> dict[GS, float]:
         """Gets airframe context based GSE limits
 
         Parameters
@@ -167,7 +167,7 @@ class DataLimits:
             }
 
     @staticmethod
-    def data_limits_lu() -> dict:
+    def data_limits_lu() -> dict[GRV, float]:
         """Gets LU limits
 
         Returns
@@ -189,7 +189,7 @@ class DataLimits:
 
 class CarriersData:
     @staticmethod
-    def carrier_context(carrier_text: str) -> Enum:
+    def carrier_context(carrier_text: str) -> KCARRIER:
         if KCARRIER.ROOSEVELT.value[0] in carrier_text:
             return KCARRIER.ROOSEVELT
         elif KCARRIER.LINCOLN.value[0] in carrier_text:
@@ -220,7 +220,7 @@ class CarriersData:
             return KCARRIER.KUZNETSOV
 
     @staticmethod
-    def carriers_data(c_type: Enum) -> dict:
+    def carriers_data(c_type: Enum) -> dict[KCARRIERFILE, float | int | None]:
         if c_type in [KCARRIER.VINSON, KCARRIER.KUZNETSOV]:
             return {
                 KCARRIERFILE.STERNDIST: -153,

@@ -21,7 +21,7 @@ class YautayPlotter(object):
         self.__limits_gs = data_object.limits_gs
         self.__limits_gse = data_object.limits_gse
 
-    def plot_case(self, file_name: str = "funkman_plot" or None, fillins: bool = False):
+    def plot_case(self, save_file_name: str = "yautay_plot" or None, fillins: bool = False):
         def data_interpolate(smooth: int = 500, **kwargs):
             ax = kwargs["ax"]
             x = kwargs["x"]
@@ -470,9 +470,6 @@ class YautayPlotter(object):
                                     clip_on=True)
                 fig.figure.figimage(plt.imread(assets.png_comment_fair), 0, 0, alpha=1, zorder=4,
                                     clip_on=True)
-            else:
-                fig.figure.figimage(plt.imread(assets.png_stamp_error), 0, 0, alpha=.3, zorder=4,
-                                    clip_on=True)
 
         overlay_squadron()
         # overlay_points()
@@ -483,9 +480,9 @@ class YautayPlotter(object):
         # plt.annotate("TEST anotacja", xy=(.51, .51), xycoords='figure fraction', alpha=1, color="red",
         #
         #              horizontalalignment='left', verticalalignment="bottom")
-        if file_name:
+        if save_file_name:
             # fig.savefig(file_name)
-            fig.savefig(file_name + "-alpha", transparent=True)
+            fig.savefig(save_file_name + "-alpha", transparent=True)
 
         return fig
 

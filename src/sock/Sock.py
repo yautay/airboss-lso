@@ -147,9 +147,9 @@ class Socket(socketserver.UDPServer):
             elif command == lsograde:
                 print("Got trap sheet!")
                 # Send LSO grade.
-                # self.bot.send_lso_embed(table, self.channel_id_airboss)
+                self.bot.send_lso_embed(table, self.channel_id_airboss)
 
-                data_parser = ParserAirbossData(dump_data=True)
+                data_parser = ParserAirbossData(dump_rcvd_data=True)
                 data_parser.init_data(table)
 
                 funkman_data = data_parser.oth_data
