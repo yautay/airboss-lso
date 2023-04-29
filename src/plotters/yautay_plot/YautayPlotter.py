@@ -15,7 +15,6 @@ class YautayPlotter(Plotter):
     def __init__(self, rcvd_data: dict, dump_rcvd_data: bool = False, dump_parsed_data: str or None = None):
         super().__init__(rcvd_data, dump_rcvd_data, dump_parsed_data)
 
-
     def plot_case(self, save_file_name: str = "yautay_plot" or None, fillins: bool = False):
         def data_interpolate(smooth: int = 500, **kwargs):
             if self.groove_telemetry:

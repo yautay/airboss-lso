@@ -147,23 +147,27 @@ class Socket(socketserver.UDPServer):
             elif command == lsograde:
                 print("Got trap sheet!")
                 # Send LSO grade.
-                self.bot.send_lso_embed(table, self.channel_id_airboss)
+                # self.bot.send_lso_embed(table, self.channel_id_airboss)
+                try:
+                    data_parser = ParserAirbossData(dump_rcvd_data=True)
+                    data_parser.init_data(table)
 
-                data_parser = ParserAirbossData(dump_rcvd_data=True)
-                data_parser.init_data(table)
+                    funkman_data = data_parser.oth_data
+                    funkman_data["trapsheet"] = data_parser.data
 
-                funkman_data = data_parser.oth_data
-                funkman_data["trapsheet"] = data_parser.data
+                    plotter = FunkPlot()
+                    fig, ax = plotter.PlotTrapSheet(result=funkman_data)
 
-                plotter = FunkPlot()
-                fig, ax = plotter.PlotTrapSheet(result=funkman_data)
-
-                # Send figure to Discord.
-                self.bot.send_fig(fig, self.channel_id_airboss)
-
-                yautay_plotter = YautayPlot(data_parser)
-                figure, ax = yautay_plotter.plot_case()
-                self.bot.send_fig(figure, self.channel_id_airboss)
+                    # Send figure to Discord.
+                    self.bot.send_fig(fig, self.channel_id_airboss)
+                except Exception as e:
+                    print(str(e))
+                try:
+                    yautay_plotter = YautayPlot(rcvd_data=table, dump_parsed_data=True)
+                    figure = yautay_plotter.plot_case()
+                    self.bot.send_fig(figure, self.channel_id_airboss)
+                except Exception as e:
+                    print(str(e))
 
             elif command == notam:
                 print("Got NOTAM!")
