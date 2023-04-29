@@ -5,6 +5,7 @@ import os
 from src.plotters.funkman_plot.FunkmanPlot import Plot as FunkPlot
 from src.bot.Bot import Bot
 from src.plotters.yautay_plot.YautayPlotter import YautayPlotter as YautayPlot
+from src.lib.ParserAirbossData import ParserAirbossData
 
 
 class Handler(socketserver.BaseRequestHandler):
@@ -145,20 +146,23 @@ class Socket(socketserver.UDPServer):
 
             elif command == lsograde:
                 print("Got trap sheet!")
-
                 # Send LSO grade.
-                self.bot.send_lso_embed(table, self.channel_id_airboss)
+                # self.bot.send_lso_embed(table, self.channel_id_airboss)
 
-                # Create trap sheet figure.
-                fig, ax = self.plot.PlotTrapSheet(table)
+                data_parser = ParserAirbossData(dump_data=True)
+                data_parser.init_data(table)
+
+                funkman_data = data_parser.oth_data
+                funkman_data["trapsheet"] = data_parser.data
+
+                plotter = FunkPlot()
+                fig, ax = plotter.PlotTrapSheet(result=funkman_data)
 
                 # Send figure to Discord.
                 self.bot.send_fig(fig, self.channel_id_airboss)
 
-                # PRECISE PLOTER HERE
-                yautay_plotter = YautayPlot(dump_data=True)
-                yautay_plotter.init_data(table)
-                figure = yautay_plotter.plot_case()
+                yautay_plotter = YautayPlot(data_parser)
+                figure, ax = yautay_plotter.plot_case()
                 self.bot.send_fig(figure, self.channel_id_airboss)
 
             elif command == notam:
