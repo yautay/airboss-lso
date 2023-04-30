@@ -14,13 +14,14 @@ from src.lib.Keys import \
     KeysTrapsheet as K, \
     KeysTrapfile as KO, \
     KeysTrapfile, KeysTrapsheet, KeysCarrierfile, KeysAirframes, KeysAoA, KeysGRV, KeysGS
+from src.lib.ParserCSVAirbossData import ParserCSVAirbossData
 from src.lib.Utils import Utils
 
 
 get_val = Utils.get_val
 
 
-class ParserAirbossData:
+class ParserAirbossData(ParserCSVAirbossData):
     def __init__(self, dump_rcvd_data: bool = False):
         self.dump_name: str or None = None
         self.limits_lue: dict = {}
@@ -36,7 +37,9 @@ class ParserAirbossData:
         self.carrier_data: dict[KeysCarrierfile, Any] = {}
         self.dump_rcvd_data: bool = dump_rcvd_data
 
-    def init_data(self, result: dict, filename: str or None = None):
+    def init_data(self, result: dict or str, filename: str or None = None):
+        if isinstance(result, str) and ".csv" in result:
+            result = self.read_csv_trap(result)
         now = datetime.datetime.now().strftime("%Y_%m_%d_%I_%M")
         if filename:
             self.dump_name = filename

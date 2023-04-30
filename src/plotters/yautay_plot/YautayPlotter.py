@@ -12,7 +12,7 @@ from src.lib.ParserAirbossData import DownwindStripper
 
 
 class YautayPlotter(Plotter):
-    def __init__(self, rcvd_data: dict, dump_rcvd_data: bool = False, dump_parsed_data: str or None = None):
+    def __init__(self, rcvd_data: dict or str, dump_rcvd_data: bool = False, dump_parsed_data: str or None = None):
         super().__init__(rcvd_data, dump_rcvd_data, dump_parsed_data)
 
     def plot_case(self, save_file_name: str = "yautay_plot" or None, fillins: bool = False):
