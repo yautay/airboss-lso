@@ -435,9 +435,17 @@ class YautayPlotter(Plotter):
                 fig.figure.figimage(plt.imread(assets.png_comment_fair), 0, 0, alpha=1, zorder=4,
                                     clip_on=True)
 
+        def no_data_stamp():
+            if not self.groove_telemetry:
+                fig.figure.figimage(plt.imread(assets.png_no_data), 350, 750, alpha=1, zorder=1,
+                                    clip_on=True)
+
         overlay_squadron()
+        no_data_stamp()
         # overlay_points()
         # overlay_stamps_and_comments()
+
+
 
         # fig.figure.figimage(plt.imread("/home/yautay/repo/dcs-bot/assets/testpic.png"), 0, 0, alpha=0.2, zorder=-1,
         #                     clip_on=True)

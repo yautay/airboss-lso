@@ -327,10 +327,16 @@ class RawDataPlotter(Plotter):
             data_interpolate(ax=axins_vy, x=Utils.mtrs_to_cbls(self.data[K.X]), y=self.data[K.VY] * 196.85, C="ins_vy")
             data_interpolate(ax=axins_roll, x=Utils.mtrs_to_cbls(self.data[K.X]), y=self.data[K.ROLL], C="ins_roll")
 
+        def no_data_stamp():
+            if not self.groove_telemetry:
+                fig.figure.figimage(plt.imread(assets.png_no_data), 350, 750, alpha=1, zorder=1,
+                                    clip_on=True)
+
         plotter_groove()
         plotter_glideslope()
         plotter_aoa()
         plotter_utils()
+        no_data_stamp()
 
         plt.xlim(x_axis_limit_left, x_axis_limit_right)
 
