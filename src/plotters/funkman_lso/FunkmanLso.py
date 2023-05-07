@@ -1,3 +1,9 @@
+from src.lib.ParserAirbossData import ParserAirbossData
+from src.lib.Utils import Utils
+
+get_val = Utils.get_val
+
+
 class FunkmanLso:
     def __init__(self, data_object: ParserAirbossData):
         self.__data = data_object.data

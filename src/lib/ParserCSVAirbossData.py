@@ -6,10 +6,15 @@ from src.lib.Utils import Utils
 get_val = Utils.get_val
 
 
+class CSVData(object):
+    def __init__(self, data: dict):
+        self.data = data
+
+
 class ParserCSVAirbossData:
 
     @staticmethod
-    def read_csv_trap(filename: str) -> dict:
+    def read_csv_trap(filename: str) -> CSVData:
         """Read a trap sheet into a dictionary as numpy arrays."""
         print(f"Reading trap sheet from file={filename}")
 
@@ -35,8 +40,7 @@ class ParserCSVAirbossData:
                             d[k] = np.append(d[k], svalue)  # svalue
         except Exception as e:
             print(f'CSV READ ERROR! {str(e)}')
-        print(d)
-        return d
+        return CSVData(d)
 
 
 # def get_result_trap(trapfile: str):

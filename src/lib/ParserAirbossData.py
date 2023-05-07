@@ -21,6 +21,11 @@ from src.lib.Utils import Utils
 get_val = Utils.get_val
 
 
+class NetData(object):
+    def __init__(self, data: dict):
+        self.data = data
+
+
 class ParserAirbossData(ParserCSVAirbossData):
     def __init__(self, dump_rcvd_data: bool = False):
         self.dump_name: str or None = None
@@ -125,6 +130,7 @@ class ParserAirbossData(ParserCSVAirbossData):
 
         with open(self.dump_name, "w") as oth_data_dump:
             oth_data_dump.write(json.dumps(oth_data, indent=4))
+
 
 class DownwindStripper:
     @staticmethod
