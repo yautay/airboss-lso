@@ -1,7 +1,7 @@
 import csv
 import numpy as np
 from src.lib.Utils import Utils
-
+from src.lib.Keys import KeysTrapfile as KTF, KeysTrapsheet as KTS
 
 get_val = Utils.get_val
 
@@ -14,13 +14,13 @@ class CSVData(object):
 class ParserCSVAirbossData:
 
     @staticmethod
-    def read_csv_trap(filename: str) -> CSVData:
+    def read_csv_trap(filepath: str) -> CSVData:
         """Read a trap sheet into a dictionary as numpy arrays."""
-        print(f"Reading trap sheet from file={filename}")
+        print(f"Reading trap sheet from file={filepath}")
 
         d = {}
         try:
-            with open(filename) as f:
+            with open(filepath) as f:
                 reader = csv.DictReader(f)
                 for k in reader.fieldnames:
                     d[k] = np.array([])
@@ -40,6 +40,29 @@ class ParserCSVAirbossData:
                             d[k] = np.append(d[k], svalue)  # svalue
         except Exception as e:
             print(f'CSV READ ERROR! {str(e)}')
+        d[KTS.X] = d.pop('X')
+        d[KTS.Z] = d.pop('Z')
+        d[KTS.ALT] = d.pop('Alt')
+        d[KTS.AOA] = d.pop('AoA')
+        d[KTS.GSE] = d.pop('GSE')
+        d[KTS.LUE] = d.pop('LUE')
+        d[KTS.VY] = d.pop('Vy')
+        d[KTS.ROLL] = d.pop('Roll')
+        d.pop('Rho')
+        d.pop('Vtot')
+        d.pop('#Time')
+        d.pop('Gamma')
+        d.pop('Pitch')
+        d.pop('Yaw')
+        d.pop('Step')
+        d[KTF.GRADE] = d['Grade'][-1]
+        d[KTF.POINTS] = d['Points'][-1]
+        d[KTF.DETAILS] = d['Details'][-1]
+        d.pop('Grade')
+        d.pop('Points')
+        d.pop('Details')
+        # ToDo Dorobić parsowanie nazwy CSV -> lotniskowiec/typ + name gracza + airframe
+        print(d)
         return CSVData(d)
 
 
@@ -50,22 +73,7 @@ class ParserCSVAirbossData:
 #     # Debug info.
 #     # print(trapsheet)
 #     # print(trapsheet.keys())
-#     try:
-#         grade = trapsheet.get("Grade")[-1]
-#     except:
-#         grade = "N/A"
-#     try:
-#         details = trapsheet.get("Details")[-1]
-#     except:
-#         details = "N/A"
-#     try:
-#         points = trapsheet.get("Points")[-1]
-#     except:
-#         points = 0
 #
-#     details.strip()
-#     if details.strip() == "":
-#         details = "Unicorn"
 #
 #     rwyangle = -9
 #     wire = randint(1, 4)

@@ -1,4 +1,4 @@
-class DiscordConfig(object):
+class ConfigDiscord(object):
     def __init__(self):
         self.token = str
         self.channel_id_main: str = ""

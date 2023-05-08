@@ -2,21 +2,30 @@ import configparser
 import os.path
 
 from root import ROOT_DIR
-from src.lib.DiscordConfig import DiscordConfig
-from src.lib.UDPSocketConfig import UDPSocketConfig
+from src.bot.Bot import Bot
+from src.lib.ConfigApp import ConfigApp
+from src.lib.ConfigDiscord import ConfigDiscord
+from src.lib.ConfigUDPSocket import ConfigUDPSocket
+from src.lib.ParserCSVAirbossData import ParserCSVAirbossData, CSVData
 
 
 class App(object):
     def __init__(self):
-        self.discord_config = DiscordConfig()
-        self.udp_socket_config = UDPSocketConfig()
+        self.config_app = ConfigApp()
+        self.config_discord = ConfigDiscord()
+        self.config_udp_socket = ConfigUDPSocket()
         self.__set_ini()
+        self.bot = Bot(self.config_discord)
 
     def run(self):
-        pass
+        self.bot.start_bot(True)
 
-    def got_csv_files(self, files: list[str]):
-        pass
+    def parse_csv_files(self, files: list[str]):
+        files_data = []
+        for file in files:
+            files_data.append(ParserCSVAirbossData.read_csv_trap(str(self.config_app.airboss_csv_folder) + file))
+        for e in files_data:
+            print(e.data.keys())
 
     def __set_ini(self):
         path_ini = os.path.join(ROOT_DIR, "App.ini")
@@ -26,18 +35,23 @@ class App(object):
             config = configparser.ConfigParser()
             config.read(path_ini)
             try:
+                section_app = config["APP"]
+                self.config_app.airboss_csv_folder = section_app.get("AIRBOSSCSV", None)
+            except:
+                print("ERROR: [APP] section missing in ini file!")
+            try:
                 section_discord = config["DISCORD"]
-                self.discord_config.token = section_discord.get("TOKEN", None)
-                self.discord_config.channel_id_main = section_discord.getint("CHANNELID_MAIN", None)
-                self.discord_config.channel_id_range = section_discord.getint("CHANNELID_RANGE", None)
-                self.discord_config.channel_id_airboss = section_discord.getint("CHANNELID_AIRBOSS", None)
-                self.discord_config.channel_id_notam = section_discord.getint("CHANNELID_NOTAM", None)
+                self.config_discord.token = section_discord.get("TOKEN", None)
+                self.config_discord.channel_id_main = section_discord.getint("CHANNELID_MAIN", None)
+                self.config_discord.channel_id_range = section_discord.getint("CHANNELID_RANGE", None)
+                self.config_discord.channel_id_airboss = section_discord.getint("CHANNELID_AIRBOSS", None)
+                self.config_discord.channel_id_notam = section_discord.getint("CHANNELID_NOTAM", None)
             except:
                 print("ERROR: [DISCORD] section missing in ini file!")
             try:
                 section_udp_socket = config["UDPSOCKET"]
-                self.udp_socket_config.port = section_udp_socket.getint("PORT", 10042)
-                self.udp_socket_config.host = section_udp_socket.get("HOST", "127.0.0.1")
+                self.config_udp_socket.port = section_udp_socket.getint("PORT", 10042)
+                self.config_udp_socket.host = section_udp_socket.get("HOST", "127.0.0.1")
             except:
                 print("ERROR: [UDPSOCKET] section missing in ini file!")
         except FileNotFoundError:

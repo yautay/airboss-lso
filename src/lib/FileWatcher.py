@@ -2,6 +2,7 @@ import os
 import time
 from os import listdir
 from os.path import isfile, join
+from pprint import pprint
 
 
 class FileWatcher(object):
@@ -14,6 +15,8 @@ class FileWatcher(object):
 
     @staticmethod
     def list_comparer(list_old: list, list_new: list) -> list[str]:
-        diff = [x for x in list_new if
-                x not in list_old]
+        diff = []
+        for x in list_new:
+            if x not in list_old:
+                diff.append(x)
         return diff

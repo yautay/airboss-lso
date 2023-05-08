@@ -1,18 +1,14 @@
-import os.path
 import time
-from http import client
 import discord
 from discord.ext import commands
 import threading
 import matplotlib.pyplot as plt
 import io
-from src.lib.Utils import Utils
-from src.lib.DiscordConfig import DiscordConfig
-get_val = Utils.get_val
+from src.lib.ConfigDiscord import ConfigDiscord
 
 
 class Bot(commands.Bot):
-    def __init__(self, config: DiscordConfig, command_prefix="$"):
+    def __init__(self, config: ConfigDiscord, command_prefix="$"):
         intents = discord.Intents.all()
         super().__init__(command_prefix, intents=intents)
 
@@ -28,10 +24,10 @@ class Bot(commands.Bot):
         # Init bot commands.
         # self._init_commands()
 
-    def callback(self, Func, *argv, **kwargs):
-        self.callback_start_func = Func
-        self.callback_start_argv = argv
-        self.callback_start_kwarg = kwargs
+    # def callback(self, Func, *argv, **kwargs):
+    #     self.callback_start_func = Func
+    #     self.callback_start_argv = argv
+    #     self.callback_start_kwarg = kwargs
 
     async def on_ready(self):
         async def send_message(text: str, channel_id: int):
