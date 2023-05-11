@@ -1,7 +1,15 @@
 import csv
+from pprint import pprint
+import re
+
 import numpy as np
 from src.lib.Utils import Utils
-from src.lib.Keys import KeysTrapfile as KTF, KeysTrapsheet as KTS
+from src.lib.Keys import \
+    KeysTrapfile as KTF, \
+    KeysTrapsheet as KTS, \
+    KeyesCSVTrapfile as KCSV, \
+    KeysAirframes, \
+    KeysCarriers
 
 get_val = Utils.get_val
 
@@ -11,10 +19,11 @@ class CSVData(object):
         self.data = data
 
 
-class ParserCSVAirbossData:
+class ParserCSVAirbossData(object):
+    def __init__(self):
+        pass
 
-    @staticmethod
-    def read_csv_trap(filepath: str) -> CSVData:
+    def read_csv_trap(self, filepath: str) -> CSVData:
         """Read a trap sheet into a dictionary as numpy arrays."""
         print(f"Reading trap sheet from file={filepath}")
 
@@ -62,6 +71,25 @@ class ParserCSVAirbossData:
         d.pop('Points')
         d.pop('Details')
         # ToDo Dorobić parsowanie nazwy CSV -> lotniskowiec/typ + name gracza + airframe
+        # Get some more data fm file title
+        filename = filepath.split("\\")[-1]
+        # AIRFRAME
+        if KCSV.F_18.value in filename:
+            d[KTF.AIRFRAME] = KeysAirframes.HORNET
+        elif KCSV.F_14A.value in filename:
+            d[KTF.AIRFRAME] = KeysAirframes.F14A
+        elif KCSV.F_14B.value in filename:
+            d[KTF.AIRFRAME] = KeysAirframes.F14B
+        elif KCSV.AV8B.value in filename:
+            d[KTF.AIRFRAME] = KeysAirframes.AV8B
+        # CVN
+        if KCSV.CVN_75.value in filename:
+            d[KTF.CARRIERTYPE] = KeysCarriers.TRUMAN
+        if KCSV.TARAWA.value in filename:
+            d[KTF.CARRIERTYPE] = KeysCarriers.TARAWA
+        # PLAYER
+        d[KTF.NAME] = filename.strip(".csv").split("Trapsheet-")[1].replace(" _ ", "-").split("_")[0]
+
         print(d)
         return CSVData(d)
 

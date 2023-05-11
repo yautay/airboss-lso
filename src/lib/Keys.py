@@ -1,6 +1,15 @@
 from enum import Enum
 
 
+class KeyesCSVTrapfile(Enum):
+    AV8B = "AV8B"
+    F_14A = "F-14A-135"
+    F_14B = "F-14B"
+    F_18 = "FA-18C_hornet"
+    CVN_75 = "CVN-75"
+    TARAWA = "TARAWA"
+
+
 class KeysAirframes(Enum):
     AV8B = "AV8BNA",
     HORNET = "FA-18C_hornet",
