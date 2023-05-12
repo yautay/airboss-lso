@@ -1,12 +1,17 @@
 import numpy as np
 from src.lib.ParserAirbossData import ParserAirbossData
 from src.lib.Keys import KeysGRV as GRV, KeysGS as GS, KeysAoA as AoA
+from src.lib.ParserCSVAirbossData import ParserCSVAirbossData
 
 
-class Plotter(ParserAirbossData):
-    def __init__(self, rcvd_data: dict, dump_rcvd_data: bool = False, dump_parsed_data: str or None = None):
-        super().__init__(dump_rcvd_data=dump_rcvd_data)
-        self.init_data(result=rcvd_data, filename=dump_parsed_data)
+class Plotter(ParserAirbossData, ParserCSVAirbossData):
+    def __init__(self, rcvd_data: dict or str, dump_rcvd_data: bool = False, dump_parsed_data: str or None = None):
+        if isinstance(rcvd_data, dict):
+            super(ParserAirbossData).__init__(dump_rcvd_data=dump_rcvd_data)
+            self.init_data(result=rcvd_data, filename=dump_parsed_data)
+        elif isinstance(rcvd_data, ParserCSVAirbossData):
+            super(ParserCSVAirbossData).__init__()
+            self.init_data(result=rcvd_data)
         self.groove_telemetry: bool = self.__assert_groove_telemetry()
 
         # AoA Limits

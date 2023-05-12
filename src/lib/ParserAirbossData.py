@@ -43,8 +43,6 @@ class ParserAirbossData(ParserCSVAirbossData):
         self.dump_rcvd_data: bool = dump_rcvd_data
 
     def init_data(self, result: dict or str, filename: str or None = None):
-        if isinstance(result, str) and ".csv" in result:
-            result = self.read_csv_trap(result)
         now = datetime.datetime.now().strftime("%Y_%m_%d_%I_%M")
         if filename:
             self.dump_name = filename

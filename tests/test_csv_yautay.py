@@ -2,6 +2,7 @@ import os
 from random import randrange
 from root import ROOT_DIR
 from src.lib.ParserCSVAirbossData import ParserCSVAirbossData
+from src.plotters.yautay_plot.YautayPlotter import YautayPlotter
 
 test_csv_files = []
 
@@ -16,5 +17,6 @@ for filename in os.listdir(os.path.join(ROOT_DIR, "tests", "csv")):
 x = randrange(len(test_csv_files))
 parser_csv = ParserCSVAirbossData()
 parser_csv.read_csv_trap(test_csv_files[x])
-
+plotter = YautayPlotter(parser_csv)
+plotter.plot_case()
 

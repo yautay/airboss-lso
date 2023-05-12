@@ -6,7 +6,7 @@ from src.bot.Bot import Bot
 from src.lib.ConfigApp import ConfigApp
 from src.lib.ConfigDiscord import ConfigDiscord
 from src.lib.ConfigUDPSocket import ConfigUDPSocket
-from src.lib.ParserCSVAirbossData import ParserCSVAirbossData, CSVData
+from src.lib.ParserCSVAirbossData import ParserCSVAirbossData
 
 
 class App(object):
